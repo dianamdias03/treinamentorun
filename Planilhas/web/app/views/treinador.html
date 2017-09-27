@@ -1,0 +1,65 @@
+<!-- clientes.html -->
+<br>
+<div class="container-fluid" ng-init="load()">
+
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-sm-5"><h4>Plano de treino semanal xxx</h4></div>
+                        <div class="col-sm-4">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" ng-click="movimentaDia(1)"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                                <button type="button" class="btn btn-primary">Segunda-feira {{diaFormatado}}</button>
+                                <button type="button" class="btn btn-primary" ng-click="movimentaDia(2)"><span class="glyphicon glyphicon-chevron-right"></span></button>
+                            </div>
+                        </div>
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-1">
+                            <!--<button type="button" class="btn btn-success" ng-click="novo()" data-toggle="modal" data-target="#myModal">Novo</button>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group" ng-repeat="item in listaRegistros"  >
+                        <label for="descricao">{{diaDaSemana(item.diaW)}} {{item.treinoLinhas}} {{item.ctrl}}</label>
+                        <textarea class="form-control" id="descricao" ng-show="item.ctrl === 2" ng-model="item.descricao" rows="{{item.treinoLinhas}}" ng-change="changeTreino(item)"></textarea>
+                        <!--<p ng-show="item.ctrl === 1" ng-click="item.ctrl = 2">{{item.descricao}}</p>-->
+<!--                        <div class="panel panel-default" ng-show="item.ctrl === 1" ng-click="item.ctrl = 2">
+                            <div class="panel-body">-->
+                                <span ng-repeat="msg in item.treino">
+                                    ++{{msg}}<br>
+                                </span>
+<!--                            </div>
+                        </div>-->
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <button type="button" class="btn btn-success" ng-click="Gravar()">Gravar</button>
+                    <button type="button" class="btn btn-default" ng-click="Excluir()">Excluir</button>
+                </div>
+            </div>
+
+            <br>
+            <br>
+            {{retornoGravar}}
+            <br>
+            {{listaRegistros[0]}}
+
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8"></div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-2"></div>
+    </div>
+
+
+
+</div>

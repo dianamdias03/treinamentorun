@@ -1,0 +1,166 @@
+<!-- home.html -->
+<div class="page-header">
+    <div class="container-fluid" ng-init="load()">
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="panel panel-default">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Período:
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table style="border-collapse: collapse;">
+                                        <tr>
+                                            <td style="padding: 6px;">
+                                                Início:
+                                            </td>
+                                            <td style="padding: 6px;">
+                                                <input type="text" class="form-control" ng-model="dataInicio">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 6px;">
+                                                Fim:
+                                            </td>
+                                            <td style="padding: 6px;">
+                                                <input type="text" class="form-control" ng-model="dataFim">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 6px;">
+                                            </td>
+                                            <td style="padding: 6px;">
+                                                <button type="button" class="btn btn-success" ng-click="load()" >Atualizar</button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div class="panel panel-default">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Funcionários:
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in listaUsuarios">
+                                <td>
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" ng-model="item.selecionado" value="1">{{item.nome}}</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="btn-group btn-group-lg" role="group" aria-label="..." ng-init="selectedRel=1">
+                    <button type="button" ng-class="{'btn btn-success': selectedRel ===1, 'btn btn-default': selectedRel !==1 }" ng-click="selectedRel=1">Relação de atividades dos usuários por dia</button>
+                    <button type="button" ng-class="{'btn btn-success': selectedRel ===2, 'btn btn-default': selectedRel !==2 }" ng-click="selectedRel=2">Tempo total por atividade</button>
+                    <button type="button" ng-class="{'btn btn-success': selectedRel ===3, 'btn btn-default': selectedRel !==3 }" ng-click="selectedRel=3">Tempo total por atividade e usuários</button>
+                </div>
+                <br>
+                <br>
+                <div class="panel panel-default" ng-repeat="item in listaRegistros" ng-show="selectedRel===1">
+                    <div class="container">
+                        <h2>{{item.usuario}}</h2>
+                        <div class="panel-group">
+                            <div class="panel panel-default" ng-repeat="item2 in item.dados">
+                                <div class="panel-heading"><h4>Dia: {{item2.dia}}</h4></div>
+                                <div class="panel-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 100px">Inicio</th>
+                                                <th style="width: 100px">Fim</th>
+                                                <th style="width: 100px">Tempo</th>
+                                                <th style="width: 300px">Atividade</th>
+                                                <th>Descrição</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="item3 in item2.dados">
+                                                <td>{{item3.inicio}}</td>
+                                                <td>{{item3.fim}}</td>
+                                                <td>{{item3.tempo}}</td>
+                                                <td>{{item3.nomeAtividade}}</td>
+                                                <td>{{item3.descricao}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" ng-show="selectedRel===2">
+                    <div class="container">
+                        <br>
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><h4>Tempo por atividade</h4></div>
+                                <div class="panel-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Atividade</th>
+                                                <th>Tempox</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr  ng-repeat="item in registrosPorAtividade">
+                                                <td>{{item.nomeAtividade}}</td>
+                                                <td>{{item.Tempo}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" ng-show="selectedRel===3">
+                    <div class="container">
+                        <h2>{{item.usuario}}</h2>
+                        <div class="panel-group">
+                            <div class="panel panel-default" ng-repeat="item in registrosPorAtividadeUsuario">
+                                <div class="panel-heading"><h4>Funcionário: {{item.usuario}}</h4></div>
+                                <div class="panel-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 60%">Atividade</th>
+                                                <th style="width: 40%">Tempo (horas)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="item3 in item.listaUsuario">
+                                                <td>{{item3.nomeAtividade}}</td>
+                                                <td>{{item3.Tempo}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

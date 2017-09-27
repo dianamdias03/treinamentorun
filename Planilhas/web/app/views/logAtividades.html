@@ -1,0 +1,120 @@
+<!-- clientes.html -->
+<br>
+<div class="container-fluid" ng-init="load()">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="table-responsive">
+                <div class="container">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-sm-5"><h4>Lançamento de Atividades</h4></div>
+                                <div class="col-sm-4">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary" ng-click="movimentaDia(1)"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                                        <button type="button" class="btn btn-primary">{{diaFormatado}}</button>
+                                        <button type="button" class="btn btn-primary" ng-click="movimentaDia(2)"><span class="glyphicon glyphicon-chevron-right"></span></button>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-success" ng-click="novo()" data-toggle="modal" data-target="#myModal">Novo</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Dia</th>
+                                        <th>Inicio</th>
+                                        <th>Fim</th>
+                                        <th>Tempo</th>
+                                        <th>Atividade</th>
+                                        <th>Descrição</th>
+                                        <th width="150px">Acoes</th>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="item in listaRegistros"> 
+                                    <tr>
+                                        <td>{{item.dia}}</td>
+                                        <td>{{item.inicio}}</td>
+                                        <td>{{item.fim}}</td>
+                                        <td>{{item.tempo}}</td>
+                                        <td>{{item.atividade}}</td>
+                                        <td>{{item.descricao}}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary" ng-click="editar(item)" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-edit"></span></button>
+                                            <button type="button" class="btn btn-danger" ng-click="gravar(item, 3)"><span class="glyphicon glyphicon-remove"></span></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="row">
+                            </div>
+                        </div>
+                        <div class="container">
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                <br>
+                {{retornoGravar}}
+            </div>
+        </div>
+    </div>
+    <!--Dados: {{dados}}-->
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Lançamento de Atividades</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="dia">Dia:</label>
+                        <input type="text" class="form-control" id="dia"  ng-model="dados.dia" ng-readonly="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="inicio">Inicio:</label>
+                        <input type="text" class="form-control" id="inicio"  ng-model="dados.inicio" ng-change="change(dados, 'inicio')">
+                    </div>
+                    <div class="form-group">
+                        <label for="fim">Fim:</label>
+                        <input type="text" class="form-control" id="fim"  ng-model="dados.fim" ng-change="change(dados, 'fim')">
+                    </div>
+                    <div class="form-group">
+                        <label for="tempo">Tempo:</label>
+                        <input type="text" class="form-control" id="tempo"  ng-model="dados.tempo" ng-readonly="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="atividade">Atividade:</label>
+                        <select class="form-control" id="atividade" ng-model="dados.atividade"  ng-options="atividade for atividade in dados.listaAtividades">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <textarea class="form-control" id="descricao" ng-model="dados.descricao" rows="3"></textarea>
+                    </div>
+                    <div class="alert alert-danger" ng-show="alerta">
+                        <strong>Atenção!</strong> {{teste}}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" ng-click="gravar(dados, 1)" >Gravar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
