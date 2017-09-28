@@ -89,7 +89,7 @@ create table tipos_distancias (
     i_tipos_distancias INT NOT NULL AUTO_INCREMENT,
     i_clientes int not null,
     descricao varchar(64) NOT NULL,
-    PRIMARY KEY (tipos_distancias)
+    PRIMARY KEY (i_tipos_distancias)
 );
 
 insert into tipos_distancias (i_clientes,descricao) values( 1, 'km' );
