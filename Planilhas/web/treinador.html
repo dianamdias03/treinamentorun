@@ -133,6 +133,7 @@ and open the template in the editor.
                                                 </tbody>
                                             </table>
                                             <div ng-show="mct_dia.ctrl_status === 2">
+                                                {{mct_dia}}
                                                 <form name="myForm">
                                                     <table>
                                                         <tbody>
@@ -145,7 +146,7 @@ and open the template in the editor.
                                                             <tr>
                                                                 <td>Modalidade</td>
                                                                 <td>
-                                                                    <select ng-options="option.descricao for option in tiposModalidades track by option.i_tipos_modalidades"
+                                                                    <select ng-options="option.descricao for option in tiposModalidades track by option.codigo"
                                                                             ng-model="mct_dia.tipos_modalidades">
                                                                     </select>
                                                                 </td>
@@ -153,7 +154,7 @@ and open the template in the editor.
                                                             <tr>
                                                                 <td>Treino</td>
                                                                 <td>
-                                                                    <select ng-options="option.descricao for option in tiposTreinos track by option.i_tipos_treinos"
+                                                                    <select ng-options="option.descricao for option in tiposTreinos track by option.codigo"
                                                                             ng-model="mct_dia.tipos_treinos">
                                                                     </select>
                                                                 </td>
@@ -161,7 +162,7 @@ and open the template in the editor.
                                                             <tr>
                                                                 <td>Intensidade</td>
                                                                 <td>
-                                                                    <select ng-options="option.descricao for option in tiposIntensidades track by option.i_tipos_intensidades"
+                                                                    <select ng-options="option.descricao for option in tiposIntensidades track by option.codigo"
                                                                             ng-model="mct_dia.tipos_intensidades">
                                                                     </select>
                                                                 </td>
@@ -169,7 +170,7 @@ and open the template in the editor.
                                                             <tr>
                                                                 <td>Percurso</td>
                                                                 <td>
-                                                                    <select ng-options="option.descricao for option in tiposPercursos track by option.i_tipos_percursos"
+                                                                    <select ng-options="option.descricao for option in tiposPercursos track by option.codigo"
                                                                             ng-model="mct_dia.tipos_percursos">
                                                                     </select>
                                                                 </td>
@@ -178,7 +179,7 @@ and open the template in the editor.
                                                                 <td>Distância</td>
                                                                 <td>
                                                                     <input type="text" ng-model="mct_dia.distancia" required>
-                                                                    <select ng-options="option.descricao for option in tiposDistancias track by option.i_tipos_distancias"
+                                                                    <select ng-options="option.descricao for option in tiposDistancias track by option.codigo"
                                                                             ng-model="mct_dia.tipos_distancias">
                                                                     </select>
                                                                 </td>

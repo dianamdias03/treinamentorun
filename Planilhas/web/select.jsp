@@ -73,19 +73,19 @@
                 + " order by dia, ordem";
     }
     if (tabela.equals("tipos_modalidades")) {
-        sql = "select i_tipos_modalidades, i_clientes, descricao from tipos_modalidades where i_clientes = " + i_clientes + " order by 1, 2";
+        sql = "select i_tipos_modalidades as codigo, i_clientes, descricao from tipos_modalidades where i_clientes = " + i_clientes + " order by 1, 2";
     }
     if (tabela.equals("tipos_treinos")) {
-        sql = "select i_tipos_treinos, i_clientes, descricao from tipos_treinos where i_clientes = " + i_clientes + " order by 1, 2";
+        sql = "select i_tipos_treinos as codigo, i_clientes, descricao from tipos_treinos where i_clientes = " + i_clientes + " order by 1, 2";
     }
     if (tabela.equals("tipos_intensidades")) {
-        sql = "select i_tipos_intensidades, i_clientes, descricao from tipos_intensidades where i_clientes = " + i_clientes + " order by 1, 2";
+        sql = "select i_tipos_intensidades as codigo, i_clientes, descricao from tipos_intensidades where i_clientes = " + i_clientes + " order by 1, 2";
     }
     if (tabela.equals("tipos_percursos")) {
-        sql = "select i_tipos_percursos, i_clientes, descricao from tipos_percursos where i_clientes = " + i_clientes + " order by 1, 2";
+        sql = "select i_tipos_percursos as codigo, i_clientes, descricao from tipos_percursos where i_clientes = " + i_clientes + " order by 1, 2";
     }
     if (tabela.equals("tipos_distancias")) {
-        sql = "select i_tipos_distancias, i_clientes, descricao from tipos_distancias where i_clientes = " + i_clientes + " order by 1, 2";
+        sql = "select i_tipos_distancias as codigo, i_clientes, descricao from tipos_distancias where i_clientes = " + i_clientes + " order by 1, 2";
     }
 
 //    out.print(sql);
@@ -101,27 +101,27 @@
             JSONObject jsonNew = new JSONObject();
 
             JSONObject jsonTiposModalidades = new JSONObject();
-            jsonTiposModalidades.put("i_tipos_modalidades", jsonItem.getInt("i_tipos_modalidades"));
+            jsonTiposModalidades.put("codigo", jsonItem.getInt("i_tipos_modalidades"));
             jsonTiposModalidades.put("descricao", jsonItem.get("s_tipos_modalidades"));
             jsonItem.put("tipos_modalidades", jsonTiposModalidades);
 
             JSONObject jsonTipoTreinos = new JSONObject();
-            jsonTipoTreinos.put("i_tipos_treinos", jsonItem.getInt("i_tipos_treinos"));
+            jsonTipoTreinos.put("codigo", jsonItem.getInt("i_tipos_treinos"));
             jsonTipoTreinos.put("descricao", jsonItem.get("s_tipos_treinos"));
             jsonItem.put("tipos_treinos", jsonTipoTreinos);
 
             JSONObject jsonTiposIntensidades = new JSONObject();
-            jsonTiposIntensidades.put("i_tipos_intensidades", jsonItem.getInt("i_tipos_intensidades"));
+            jsonTiposIntensidades.put("codigo", jsonItem.getInt("i_tipos_intensidades"));
             jsonTiposIntensidades.put("descricao", jsonItem.get("s_tipos_intensidades"));
             jsonItem.put("tipos_intensidades", jsonTiposIntensidades);
 
             JSONObject jsonTiposPercursos = new JSONObject();
-            jsonTiposPercursos.put("i_tipos_percursos", jsonItem.getInt("i_tipos_percursos"));
+            jsonTiposPercursos.put("codigo", jsonItem.getInt("i_tipos_percursos"));
             jsonTiposPercursos.put("descricao", jsonItem.get("s_tipos_percursos"));
             jsonItem.put("tipos_percursos", jsonTiposPercursos);
 
             JSONObject jsonTipoDistancia = new JSONObject();
-            jsonTipoDistancia.put("i_tipos_distancias", jsonItem.getInt("i_tipos_distancias"));
+            jsonTipoDistancia.put("codigo", jsonItem.getInt("i_tipos_distancias"));
             jsonTipoDistancia.put("descricao", jsonItem.get("s_tipos_distancias"));
             jsonItem.put("tipos_distancias", jsonTipoDistancia);
 

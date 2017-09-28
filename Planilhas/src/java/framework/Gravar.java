@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
-import org.apache.jasper.runtime.JspWriterImpl;
 import org.json.JSONObject;
 
 /**
@@ -51,11 +50,17 @@ public abstract class Gravar {
             jsonRequestParam = new JSONObject();
             out.print("**Erro**" + e.toString());
         }
-        defineTabela();
+        if (!isCreateNewRecord()) {
+            defineTabela();
+        }
+    }
+
+    public boolean isCreateNewRecord() {
+        return this.getJsonRequestParam().getJSONObject("params").optInt("acao", 0) == 1;
     }
 
     public boolean update() {
-        
+
         String sql;
 
         if (tabela.isNewRecord()) {
@@ -78,12 +83,17 @@ public abstract class Gravar {
         try {
             this.setParams(params);
 
-            System.out.println(this.getTabela().getInsert());
-            System.out.println(this.getTabela().getUpdate());
-            System.out.println(this.getTabela().getDelete());
-            Arquivo.gravarLog(this.getTabela().getInsert());
-            Arquivo.gravarLog(this.getTabela().getUpdate());
-            Arquivo.gravarLog(this.getTabela().getDelete());
+            if (isCreateNewRecord()) {
+                System.out.println(this.newRecord().toString());
+                Arquivo.gravarLog(this.newRecord().toString());
+            } else {
+                System.out.println(this.getTabela().getInsert());
+                System.out.println(this.getTabela().getUpdate());
+                System.out.println(this.getTabela().getDelete());
+                Arquivo.gravarLog(this.getTabela().getInsert());
+                Arquivo.gravarLog(this.getTabela().getUpdate());
+                Arquivo.gravarLog(this.getTabela().getDelete());
+            }
 
         } catch (IOException ex) {
             Logger.getLogger(Gravar.class.getName()).log(Level.SEVERE, null, ex);
@@ -108,5 +118,7 @@ public abstract class Gravar {
     }
 
     public abstract void defineTabela();
+
+    public abstract JSONObject newRecord();
 
 }

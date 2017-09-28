@@ -108,7 +108,14 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
     };
 
     $scope.novo = function (mct) {
-        mct.Itens.push({"dia":"ccc","ctrl_status":1});
+//        mct.Itens.push({"dia": "ccc", "ctrl_status": 1});
+
+        $http.post("gravar.jsp", {params: {"tab": "tipos_modalidades", "acao": 1}}).then(function (response) {
+            $scope.retornoGravar = response.data;
+            if ($scope.retornoGravar.resultado) {
+                mct.Itens.push(response.data.registro);
+            }
+        });
     }
 
 })

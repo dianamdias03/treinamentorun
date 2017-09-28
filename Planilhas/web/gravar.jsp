@@ -10,16 +10,23 @@
 <%@page import="framework.Conexao"%>
 <%
 
+    boolean retorno;
+    JSONObject jsonRetorno = new JSONObject();
+
     GravarMicroCicloTreinos gravar = new GravarMicroCicloTreinos(out);
 
     gravar.requestParams(request);
 
-    boolean retorno = gravar.update();
+    if (gravar.isCreateNewRecord()) {
+        jsonRetorno.put("registro", gravar.newRecord());
+        retorno = true;
+    } else {
+        retorno = gravar.update();
+    }
 
-    JSONObject jsonRetorno = new JSONObject();
     jsonRetorno.put("resultado", retorno);
     jsonRetorno.put("params", "");
-    
+
     out.print(jsonRetorno.toString());
 
 %>
