@@ -23,80 +23,90 @@ public abstract class Gravar {
     private JspWriter out;
     private JSONObject jsonRequestParam;
     private Tabela tabela;
+    public long lastID;
 
     public Gravar(JspWriter out) {
         this.out = out;
     }
 
     public void requestParams(HttpServletRequest request) {
-        String params = "";
+        String params;
+        Arquivo.gravarLog("setParams: " + "Inicio");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
-            if (br != null) {
-                params = br.readLine();
-            } else {
-                params = "";
-            }
-            setParams(params);
+            params = br.readLine();
         } catch (IOException ex) {
+            Arquivo.gravarLog("setParams: ex: " + "Erro");
             Logger.getLogger(Gravar.class.getName()).log(Level.SEVERE, null, ex);
+            params = "{\"erro\":\"Erro lendo parametros\"}";
         }
+
+        setParams(params);
+        Arquivo.gravarLog("setParams: " + "Fim");
     }
 
-    public void setParams(String params) throws IOException {
+    public void setParams(String params) {
+        Arquivo.gravarLog("setParams: str=" + params);
         try {
             jsonRequestParam = new JSONObject(params);
         } catch (Exception e) {
             jsonRequestParam = new JSONObject();
-            out.print("**Erro**" + e.toString());
+            Arquivo.gravarLog("**Erro**" + e.toString());
         }
         if (!isCreateNewRecord()) {
             defineTabela();
         }
+        Arquivo.gravarLog("setParams: ok=" + jsonRequestParam.toString());
     }
 
     public boolean isCreateNewRecord() {
         return this.getJsonRequestParam().getJSONObject("params").optInt("acao", 0) == 1;
     }
 
+    public boolean isDeleteRecord() {
+        return this.getJsonRequestParam().getJSONObject("params").optInt("acao", 0) == 2;
+    }
+
     public boolean update() {
 
         String sql;
+        boolean resultado;
 
         if (tabela.isNewRecord()) {
             sql = this.getTabela().getInsert();
         } else {
-            sql = this.getTabela().getUpdate();
+            if (this.isDeleteRecord()) {
+                sql = this.getTabela().getDelete();
+            } else {
+                sql = this.getTabela().getUpdate();
+            }
         }
 
         Arquivo.gravarLog(sql);
 
         Conexao conexao = new Conexao();
         conexao.conectar();
-        return conexao.executaComando(sql);
+        resultado = conexao.executaComando(sql);
+        this.lastID = conexao.lastID;
+
+        return resultado;
 
 //        Arquivo.gravarLog(this.getTabela().getDelete());
     }
 
     public void testGravar(String params) {
 
-        try {
-            this.setParams(params);
-
-            if (isCreateNewRecord()) {
-                System.out.println(this.newRecord().toString());
-                Arquivo.gravarLog(this.newRecord().toString());
-            } else {
-                System.out.println(this.getTabela().getInsert());
-                System.out.println(this.getTabela().getUpdate());
-                System.out.println(this.getTabela().getDelete());
-                Arquivo.gravarLog(this.getTabela().getInsert());
-                Arquivo.gravarLog(this.getTabela().getUpdate());
-                Arquivo.gravarLog(this.getTabela().getDelete());
-            }
-
-        } catch (IOException ex) {
-            Logger.getLogger(Gravar.class.getName()).log(Level.SEVERE, null, ex);
+        this.setParams(params);
+        if (isCreateNewRecord()) {
+            System.out.println(this.newRecord().toString());
+            Arquivo.gravarLog(this.newRecord().toString());
+        } else {
+            System.out.println(this.getTabela().getInsert());
+            System.out.println(this.getTabela().getUpdate());
+            System.out.println(this.getTabela().getDelete());
+            Arquivo.gravarLog(this.getTabela().getInsert());
+            Arquivo.gravarLog(this.getTabela().getUpdate());
+            Arquivo.gravarLog(this.getTabela().getDelete());
         }
 
     }

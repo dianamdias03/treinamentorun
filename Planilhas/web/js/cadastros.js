@@ -1,4 +1,4 @@
-pawork_modulo.service('cadastros', function () {
+treinoApp.service('cadastros', function () {
 
     this.setBackEndFile = function (nome) {
         this.backEndFile = nome;
@@ -54,6 +54,18 @@ pawork_modulo.service('cadastros', function () {
         for (var i = 0; i < arr.length; i++) {
             if (arr[i] === item) {
                 arr.splice(i, 1);
+                break;
+            }
+        }
+    }
+    
+    this.excluirDaLista = function (item, lista) {
+        console.log('excluirDaLista - inicio - '+lista.length);
+        for (var i = 0; i < lista.length; i++) {
+            console.log('Codigo: '+item.codigo);
+            if (lista[i] === item) {
+                lista.splice(i, 1);
+                console.log('Entrou');
                 break;
             }
         }

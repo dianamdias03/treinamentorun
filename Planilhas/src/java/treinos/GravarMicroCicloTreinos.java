@@ -31,7 +31,7 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
 
         setTabela(new Tabela("micro_ciclo_treinos"));
 
-        getTabela().addColunaI("i_micro_ciclo_treinos", jsonDados.optInt("i_micro_ciclo_treinos", 0), true);
+        getTabela().addColunaI("i_micro_ciclo_treinos", jsonDados.optInt("codigo", 0), true);
         getTabela().addColunaI("i_micro_ciclo", jsonDados.optInt("i_micro_ciclo", 0));
         getTabela().addColunaI("i_clientes", jsonDados.optInt("i_clientes", 0));
         getTabela().addColunaI("i_usuarios", jsonDados.optInt("i_usuarios", 0));
@@ -61,14 +61,25 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
 
     @Override
     public JSONObject newRecord() {
+
+        Arquivo.gravarLog("->" + this.getJsonRequestParam().getJSONObject("params").toString());
+
         RegistroJson registro = new RegistroJson();
         registro.create();
-        registro.setItem("ctrl_status", 1);
-        registro.setItem("i_micro_ciclo_treinos", 0);
+        registro.setItem("ctrl_status", 2);
+        registro.setItem("codigo", 0);
         registro.setItem("tipo", 1);
-        registro.setItem("i_tipos_modalidades", 1, "Não informado");
-        registro.setItem("descricao", "Teste Teste");
-        
+        registro.setItem("dia", this.getJsonRequestParam().getJSONObject("params").optString("dia", ""));
+        registro.setItem("tipos_modalidades", 1, "Não informado");
+        registro.setItem("tipos_intensidades", 1, "Não informado");
+        registro.setItem("tipos_treinos", 1, "Não informado");
+        registro.setItem("tipos_distancias", 1, "km");
+        registro.setItem("tipos_percursos", 1, "Não informado");
+        registro.setItem("descricao", "");
+        registro.setItem("i_clientes", this.getJsonRequestParam().getJSONObject("params").optInt("i_clientes", 0));
+        registro.setItem("i_usuarios", this.getJsonRequestParam().getJSONObject("params").optInt("i_usuarios", 0));
+        registro.setItem("i_micro_ciclo", this.getJsonRequestParam().getJSONObject("params").optInt("i_micro_ciclo", 0));
+
         return registro.getRegistro();
     }
 

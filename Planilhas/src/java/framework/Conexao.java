@@ -9,6 +9,7 @@ import java.sql.Statement;
 public class Conexao {
 
     Connection conn = null;
+    public long lastID;
 
     public boolean conectar() {
         try {
@@ -55,7 +56,13 @@ public class Conexao {
 
         try {
             stmt = conn.createStatement();
-            stmt.execute(sql);
+            //stmt.execute(sql);
+            stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                lastID = rs.getInt(1);
+            }
             // Now do something with the ResultSet ....
         } catch (SQLException ex) {
             // handle any errors

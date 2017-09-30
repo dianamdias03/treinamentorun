@@ -1,16 +1,9 @@
-<%@page import="treinos.GravarMicroCicloTreinos"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Date"%>
-<%@page import="org.json.JSONArray"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="java.io.InputStreamReader"%>
-<%@page import="java.io.BufferedReader"%>
-<%@page import="framework.RsJson"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="framework.Conexao"%>
+<%@page import="treinos.GravarMicroCicloTreinos"%>
 <%
 
     boolean retorno;
+    long lastID=0;
     JSONObject jsonRetorno = new JSONObject();
 
     GravarMicroCicloTreinos gravar = new GravarMicroCicloTreinos(out);
@@ -22,10 +15,12 @@
         retorno = true;
     } else {
         retorno = gravar.update();
+        lastID = gravar.lastID;
     }
 
     jsonRetorno.put("resultado", retorno);
-    jsonRetorno.put("params", "");
+    jsonRetorno.put("params", lastID);
+    jsonRetorno.put("novoCodigo", lastID);
 
     out.print(jsonRetorno.toString());
 

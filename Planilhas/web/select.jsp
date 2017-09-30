@@ -1,3 +1,4 @@
+<%@page import="framework.Arquivo"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Date"%>
 <%@page import="org.json.JSONArray"%>
@@ -39,6 +40,8 @@
         out.print("**Erro**" + e.toString());
     }
 
+    Arquivo.gravarLog(params);
+
     Conexao conexao = new Conexao();
     conexao.conectar();
 
@@ -53,12 +56,20 @@
     }
     if (tabela.equals("atleta_micro_ciclo")) {
         int i_usuarios = jsonObj.getJSONObject("params").optInt("i_usuarios", 0);
-        sql = "select i_micro_ciclo, i_clientes, i_usuarios, inicio, fim, situacao, comentario_treinador, comentario_atleta from micro_ciclo where i_usuarios = " + i_usuarios;
+        String dia = jsonObj.getJSONObject("params").optString("dia", "2017-09-25");
+        dia = "cast('" + dia + "' as date)";
+        if (jsonObj.getJSONObject("params").optInt("navegacao", 0) == 1) {
+            dia = "date_add("+ dia + ", interval 7 day )";
+        }
+        if (jsonObj.getJSONObject("params").optInt("navegacao", 0) == -1) {
+            dia = "date_add("+ dia + ", interval -7 day )";
+        }
+        sql = "select i_micro_ciclo, i_clientes, i_usuarios, inicio, fim, situacao, comentario_treinador, comentario_atleta from micro_ciclo where i_usuarios = " + i_usuarios + " and inicio=" + dia;
     }
     if (tabela.equals("atleta_micro_ciclo_treinos")) {
         int i_usuarios = jsonObj.getJSONObject("params").optInt("i_usuarios", 0);
         int i_micro_ciclo = jsonObj.getJSONObject("params").optInt("i_micro_ciclo", 0);
-        sql = "select i_micro_ciclo_treinos, i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, "
+        sql = "select i_micro_ciclo_treinos as codigo, i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, "
                 + "i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, "
                 + "tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, "
                 + "i_micro_ciclo_treinos_planejado,"
@@ -89,6 +100,7 @@
     }
 
 //    out.print(sql);
+    Arquivo.gravarLog("sql: " + sql);
     JSONArray dados = rsJson.getJsonBySQLStr(sql);
 
     if (tabela.equals("atleta_micro_ciclo_treinos")) {
@@ -126,7 +138,7 @@
             jsonItem.put("tipos_distancias", jsonTipoDistancia);
 
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-            String lsDia = format.format((Date)jsonItem.get("dia"));
+            String lsDia = format.format((Date) jsonItem.get("dia"));
             jsonItem.put("dia", lsDia);
 
             if (!dia.equals(jsonItem.get("dia").toString())) {
@@ -139,12 +151,23 @@
             }
             jsonLinha.put(jsonItem);
         }
+
+        if (dados.length() == 0) {
+            jsonLinha = new JSONArray();
+            JSONObject jsonNew = new JSONObject();
+            jsonNew.put("dia", "18/09/2017");
+            jsonNew.put("diaF", "18/09/2017".substring(0, 5));
+            jsonNew.put("Itens", jsonLinha);
+            dados2.put(jsonNew);
+        }
+
         dados = dados2;
     }
 
     JSONObject jsonRetorno = new JSONObject();
     jsonRetorno.put("registros", dados);
     jsonRetorno.put("params", jsonObj);
+    jsonRetorno.put("resultado", dados.length()>0);
 
     out.print(jsonRetorno.toString());
 

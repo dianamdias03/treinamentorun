@@ -41,6 +41,7 @@ create table tipos_modalidades (
 insert into tipos_modalidades (i_clientes,descricao) values( 1, 'Corrida' );
 insert into tipos_modalidades (i_clientes,descricao) values( 1, 'Natação' );
 insert into tipos_modalidades (i_clientes,descricao) values( 1, 'Ciclismo' );
+insert into tipos_modalidades (i_clientes,descricao) values( 1, 'Folga' );
 
 create table tipos_intensidades (
     i_tipos_intensidades INT NOT NULL AUTO_INCREMENT,
@@ -142,3 +143,18 @@ INSERT INTO treinos.micro_ciclo_treinos (i_micro_ciclo, i_clientes, i_usuarios, 
 INSERT INTO treinos.micro_ciclo_treinos (i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, i_micro_ciclo_treinos_planejado) VALUES ('1', '1', '4', '4', '2017-09-22', '2', '1', '1', '1', '1', '1', 'Segundo treino do dia', '0', '0', '0', '150', '15', '0');
 INSERT INTO treinos.micro_ciclo_treinos (i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, i_micro_ciclo_treinos_planejado) VALUES ('1', '1', '4', '4', '2017-09-23', '1', '1', '1', '1', '1', '1', 'testetetete', '0', '0', '0', '150', '15', '0');
 INSERT INTO treinos.micro_ciclo_treinos (i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, i_micro_ciclo_treinos_planejado) VALUES ('1', '1', '4', '4', '2017-09-24', '1', '1', '1', '1', '1', '1', 'testetetete', '0', '0', '0', '150', '15', '0');
+
+
+-- 30/09/2017 --------------------------------
+create table semana (
+    i_dia integer primary key,
+    nome char(32),
+    sigra char(3)
+);
+insert into semana values( 1, 'Domingo', 'Dom');
+insert into semana values( 2, 'Segunda-feira', 'Seg');
+insert into semana values( 3, 'Terça-feira', 'Ter');
+insert into semana values( 4, 'Quarta-feira', 'Qua');
+insert into semana values( 5, 'Quinta-feira', 'Qui');
+insert into semana values( 6, 'Sexta-feira', 'Sex');
+insert into semana values( 7, 'Sabado', 'Sab');
