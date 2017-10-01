@@ -51,6 +51,14 @@
     sql = "";
     int i_clientes = 1;
 
+    if (tabela.equals("usuarios")) {
+        sql = "select i_usuarios, i_clientes, nome, email, senha, data_nascto, "
+                + "admin, cria_planilhas, cria_usuarios, cria_eventos, recebe_planilha, "
+                + "cpf, rg, endereco, cidade, estado, cep, "
+                + "observacoes, telefone_1, telefone_2 "
+                + "from usuarios "
+                + "order by 1, 2";
+    }
     if (tabela.equals("atletas")) {
         sql = "select i_usuarios, i_clientes, nome from usuarios order by 1, 2";
     }

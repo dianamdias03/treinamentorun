@@ -158,3 +158,12 @@ insert into semana values( 4, 'Quarta-feira', 'Qua');
 insert into semana values( 5, 'Quinta-feira', 'Qui');
 insert into semana values( 6, 'Sexta-feira', 'Sex');
 insert into semana values( 7, 'Sabado', 'Sab');
+
+-- 30/09/2017 --------------------------------
+alter table usuarios add cpf varchar(14);
+alter table usuarios add rg varchar(14);
+alter table usuarios add endereco varchar(64);
+alter table usuarios add cidade varchar(64);
+alter table usuarios add estado varchar(2);
+alter table usuarios add cep varchar(10);
+alter table usuarios add observacoes varchar(2048);
