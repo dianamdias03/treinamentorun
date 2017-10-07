@@ -37,7 +37,8 @@
 
         <div class="container"  ng-controller="ClientesCtrl" ng-init="load()">
             <h2>Usuários</h2>
-            <!--<p>The .table-striped class adds zebra-stripes to a table:</p>-->            
+            <!--<p>The .table-striped class adds zebra-stripes to a table:</p>-->
+            <button type="button" class="btn btn-success" ng-click="novo()">Novo</button>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -72,19 +73,19 @@
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Modal title</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
+                                <h3 class="modal-title">Cadastro de Usuários</h3>
                             </div>
                             <div class="modal-body">
-                                <div class="form-row">
+                                <div class="row">
                                     <div class="form-group col-md-12">
                                         <label for="inputNome" class="col-form-label">Nome</label>
                                         <input id="inputNome" type="text" ng-model="registro.nome" class="form-control" placeholder="Nome do atleta">
                                     </div>
                                 </div>
-                                <div class="form-row">
+                                <div class="row">
                                     <div class="form-group col-md-4">
                                         <label for="inputNascto" class="col-form-label">Data de nascimento</label>
                                         <input id="inputNascto" type="text" ng-model="registro.data_nascto" class="form-control" placeholder="Informe a data de nascimento">
@@ -98,7 +99,7 @@
                                         <input id="inputRg" type="text" ng-model="registro.telefone_2" class="form-control" placeholder="Informe o numero de um segundo telefone para contado">
                                     </div>
                                 </div>
-                                <div class="form-row">
+                                <div class="row">
                                     <div class="form-group col-md-6">
                                         <label for="inputCPF" class="col-form-label">CPF</label>
                                         <input id="inputCPF" type="text" ng-model="registro.cpf" class="form-control" placeholder="CPF">
@@ -108,7 +109,7 @@
                                         <input id="inputRg" type="text" ng-model="registro.rg" class="form-control" placeholder="RG">
                                     </div>
                                 </div>
-                                <div class="form-row">
+                                <div class="row">
                                     <div class="form-group col-md-6">
                                         <label for="inputEmail" class="col-form-label">Email</label>
                                         <input  id="inputEmail" type="email" ng-model="registro.email" class="form-control" placeholder="Email">
@@ -118,13 +119,13 @@
                                         <input id="inputPassword" type="password" ng-model="registro.senha" class="form-control" placeholder="Senha de acesso">
                                     </div>
                                 </div>
-                                <div class="form-row">
+                                <div class="row">
                                     <div class="form-group col-md-12">
                                         <label for="inputEndereco" class="col-form-label">Endereço</label>
                                         <input id="inputEndereco" type="text" ng-model="registro.endereco" class="form-control" placeholder="Informe a rua, apartamento, número etc... Ex: Av. Centenário, 7504. Apto 405.">
                                     </div>
                                 </div>
-                                <div class="form-row">
+                                <div class="row">
                                     <div class="form-group col-md-6">
                                         <label for="inputCidade" class="col-form-label">Cidade</label>
                                         <input id="inputCidade" type="text" ng-model="registro.cidade" class="form-control" placeholder="Nome da cidade">
@@ -141,7 +142,7 @@
                                         <input id="inputCEP" type="text" ng-model="registro.cep" class="form-control">
                                     </div>
                                 </div>
-                                <div class="form-row">
+                                <div class="row">
                                     <div class="form-group col-md-3">
                                         <div class="form-check">
                                             <label class="form-check-label">
@@ -169,7 +170,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                 </div>
-                                <div class="form-row">
+                                <div class="row">
                                     <div class="form-group col-md-12">
                                         <label for="inputObservacoes" class="col-form-label">Anotações sobre o atleta</label>
                                         <textarea class="form-control" id="inputObservacoes"  ng-model="registro.observacoes" rows="7" placeholder="Anotações sobre o atleta.">
@@ -178,8 +179,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" ng-click="gravar(registro)">Salvar</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                             </div>
                         </div>
                     </div>

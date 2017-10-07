@@ -1,3 +1,4 @@
+<%@page import="framework.FormatacaoDatas"%>
 <%@page import="framework.Arquivo"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Date"%>
@@ -23,18 +24,19 @@
     }
 
     if (params == null) {
-        JSONObject jsonObjParams = new JSONObject();
-        jsonObjParams.put("tab", "atleta_micro_ciclo_treinos");
-        jsonObjParams.put("i_usuarios", 4);
-        jsonObjParams.put("i_micro_ciclo", 1);
-        jsonObj = new JSONObject();
-        jsonObj.put("params", jsonObjParams);
-        params = jsonObj.toString();
+//        JSONObject jsonObjParams = new JSONObject();
+//        jsonObjParams.put("tabela", "atleta_micro_ciclo_treinos");
+//        jsonObjParams.put("i_usuarios", 4);
+//        jsonObjParams.put("i_micro_ciclo", 1);
+//        jsonObj = new JSONObject();
+//        jsonObj.put("params", jsonObjParams);
+//        params = jsonObj.toString();
+        params = "{\"params\":{\"tabela\":\"atleta_micro_ciclo_treinos\",\"i_usuarios\":4,\"i_micro_ciclo\":19}}";
     }
 
     try {
         jsonObj = new JSONObject(params);
-        tabela = jsonObj.getJSONObject("params").optString("tab", "");
+        tabela = jsonObj.getJSONObject("params").optString("tabela", "");
     } catch (Exception e) {
         jsonObj = new JSONObject();
         out.print("**Erro**" + e.toString());
@@ -52,7 +54,7 @@
     int i_clientes = 1;
 
     if (tabela.equals("usuarios")) {
-        sql = "select i_usuarios, i_clientes, nome, email, senha, data_nascto, "
+        sql = "select i_usuarios as codigo, i_clientes, nome, email, senha, data_nascto, "
                 + "admin, cria_planilhas, cria_usuarios, cria_eventos, recebe_planilha, "
                 + "cpf, rg, endereco, cidade, estado, cep, "
                 + "observacoes, telefone_1, telefone_2 "
@@ -60,17 +62,28 @@
                 + "order by 1, 2";
     }
     if (tabela.equals("atletas")) {
-        sql = "select i_usuarios, i_clientes, nome from usuarios order by 1, 2";
+        String dia = jsonObj.getJSONObject("params").optString("dia", "2017-09-25");
+        dia = "cast('" + dia + "' as date)";
+        sql = "select i_usuarios as codigo, i_clientes, nome, email,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 0 day ) ),-1 ) as Dia2,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 1 day ) ),-1 ) as Dia3,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 2 day ) ),-1 ) as Dia4,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 3 day ) ),-1 ) as Dia5,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 4 day ) ),-1 ) as Dia6,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 5 day ) ),-1 ) as Dia7,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 6 day ) ),-1 ) as Dia8"
+                + "  from usuarios u "
+                + " order by 1, 2";
     }
     if (tabela.equals("atleta_micro_ciclo")) {
         int i_usuarios = jsonObj.getJSONObject("params").optInt("i_usuarios", 0);
         String dia = jsonObj.getJSONObject("params").optString("dia", "2017-09-25");
         dia = "cast('" + dia + "' as date)";
         if (jsonObj.getJSONObject("params").optInt("navegacao", 0) == 1) {
-            dia = "date_add("+ dia + ", interval 7 day )";
+            dia = "date_add(" + dia + ", interval 7 day )";
         }
         if (jsonObj.getJSONObject("params").optInt("navegacao", 0) == -1) {
-            dia = "date_add("+ dia + ", interval -7 day )";
+            dia = "date_add(" + dia + ", interval -7 day )";
         }
         sql = "select i_micro_ciclo, i_clientes, i_usuarios, inicio, fim, situacao, comentario_treinador, comentario_atleta from micro_ciclo where i_usuarios = " + i_usuarios + " and inicio=" + dia;
     }
@@ -112,10 +125,11 @@
     JSONArray dados = rsJson.getJsonBySQLStr(sql);
 
     if (tabela.equals("atleta_micro_ciclo_treinos")) {
+        FormatacaoDatas formatacaoDatas;
         JSONArray dados2 = new JSONArray();
         JSONObject jsonItem;
         JSONArray jsonLinha = new JSONArray();
-        String dia = "";
+        Date dia = new Date();
         for (int i = 0; i < dados.length(); i++) {
             jsonItem = dados.getJSONObject(i);
             JSONObject jsonNew = new JSONObject();
@@ -145,37 +159,78 @@
             jsonTipoDistancia.put("descricao", jsonItem.get("s_tipos_distancias"));
             jsonItem.put("tipos_distancias", jsonTipoDistancia);
 
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-            String lsDia = format.format((Date) jsonItem.get("dia"));
-            jsonItem.put("dia", lsDia);
+            Date diaJsonItem = FormatacaoDatas.ymdToDate(jsonItem.get("dia").toString());
+            formatacaoDatas = new FormatacaoDatas(diaJsonItem);
+            Arquivo.gravarLog(jsonItem.get("dia").toString() + " " + formatacaoDatas.getDia().toString() + " " + formatacaoDatas.getDataDMY() + " " + diaJsonItem.toString());
+            jsonItem.put("dia", formatacaoDatas.getDataDMY());
 
-            if (!dia.equals(jsonItem.get("dia").toString())) {
+            if (!dia.equals(formatacaoDatas.getDia())) {
                 jsonLinha = new JSONArray();
                 jsonNew.put("dia", jsonItem.get("dia"));
-                jsonNew.put("diaF", jsonItem.get("dia").toString().substring(0, 5));
+                jsonNew.put("diaF", formatacaoDatas.diaMes());
+                jsonNew.put("diaS", formatacaoDatas.diaSemana());
                 jsonNew.put("Itens", jsonLinha);
                 dados2.put(jsonNew);
-                dia = jsonItem.get("dia").toString();
+                dia = formatacaoDatas.getDia();
             }
             jsonLinha.put(jsonItem);
         }
 
-        if (dados.length() == 0) {
-            jsonLinha = new JSONArray();
+        dados2 = new JSONArray();
+        String lsDia = jsonObj.getJSONObject("params").optString("dia", "2017-09-25");
+        formatacaoDatas = new FormatacaoDatas(FormatacaoDatas.ymdToDate(lsDia));
+        for (int i = 0; i < 7; i++) {
             JSONObject jsonNew = new JSONObject();
-            jsonNew.put("dia", "18/09/2017");
-            jsonNew.put("diaF", "18/09/2017".substring(0, 5));
+            jsonLinha = new JSONArray();
+            jsonNew.put("dia", formatacaoDatas.getDataDMY());
+            jsonNew.put("diaF", formatacaoDatas.diaMes());
+            jsonNew.put("diaS", formatacaoDatas.diaSemana());
+
+            for (int j = 0; j < dados.length(); j++) {
+                jsonItem = dados.getJSONObject(j);
+                Date diaJsonItem = FormatacaoDatas.dmyToDate(jsonItem.get("dia").toString());
+                if (diaJsonItem.equals(formatacaoDatas.getDia())) {
+                    jsonLinha.put(jsonItem);
+                }
+            }
+
             jsonNew.put("Itens", jsonLinha);
             dados2.put(jsonNew);
+            formatacaoDatas.addDia(1);
         }
 
         dados = dados2;
     }
 
+    if (tabela.equals("usuarios")) {
+        JSONObject jsonItem;
+        for (int i = 0; i < dados.length(); i++) {
+            jsonItem = dados.getJSONObject(i);
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            if (jsonItem.has("data_nascto")) {
+                String lsDia = format.format((Date) jsonItem.get("data_nascto"));
+                jsonItem.put("data_nascto", lsDia);
+            }
+        }
+    }
+
+    if (tabela.equals("atleta_micro_ciclo")) {
+        JSONObject jsonItem;
+        FormatacaoDatas formatacaoDatas;
+
+        for (int i = 0; i < dados.length(); i++) {
+            jsonItem = dados.getJSONObject(i);
+            formatacaoDatas = new FormatacaoDatas(FormatacaoDatas.ymdToDate(jsonItem.get("inicio").toString()));
+            jsonItem.put("inicioF", formatacaoDatas.diaMes());
+            formatacaoDatas = new FormatacaoDatas(FormatacaoDatas.ymdToDate(jsonItem.get("fim").toString()));
+            jsonItem.put("fimF", formatacaoDatas.diaMes());
+        }
+    }
+
     JSONObject jsonRetorno = new JSONObject();
     jsonRetorno.put("registros", dados);
     jsonRetorno.put("params", jsonObj);
-    jsonRetorno.put("resultado", dados.length()>0);
+    jsonRetorno.put("resultado", dados.length() > 0);
 
     out.print(jsonRetorno.toString());
 

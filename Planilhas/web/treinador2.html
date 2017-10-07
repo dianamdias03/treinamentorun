@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html ng-app="TreinoApp">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="angular-1.6.5/angular.min.js" type="text/javascript"></script>
+        <script src="angular-1.6.5/angular-route.min.js" type="text/javascript"></script>
+        <script src="treino-app.js" type="text/javascript"></script>
+        <script src="js/cadastros.js" type="text/javascript"></script>
+        <link href="treinos.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body ng-controller="TreinadorCtrl" ng-init="load()">
+        <div>{{Acao}}</div>
+        <div>{{pageActive}}</div>
+        <div>{{Atleta}}</div>
+        <div>{{listaRegistros}}</div>
+        <div><br>{{tiposDistancias}}</div>
+        <!--<div><br>microCicloTreinosAtleta: {{microCicloTreinosAtleta}}</div>-->
+        <div><br>Gravar: {{retornoGravar}}</div>
+
+        <div ng-show="pageActive === 'selAtleta'">
+            <table>
+                <tr>
+                    <td>
+                        Nome
+                    </td>
+                    <td>
+                        Codigo
+                    </td>
+                    <td>
+                        Ações
+                    </td>
+                </tr>
+                <tr ng-repeat="item in listaRegistros">
+                    <td>
+                        <span ng-click="selectPage('criaTreinos', item);
+                                        pageActive = 'criaTreinos';">{{item.nome}}</span>
+                    </td>
+                    <td>
+                        {{item.i_usuarios}}
+                    </td>
+                    <td>
+                        <span ng-click="execAcao('Edit', item)" >Editar</span>
+                        <span ng-click="execAcao('Del', item)" >Excluir</span>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div ng-show="pageActive === 'criaTreinos'">
+            <span>{{Atleta.nome}}</span>
+            <!--            <br>{{microCicloAtleta}}
+                        <br>{{microCicloTreinosAtleta}}-->
+
+            <table>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    Período
+                                </td>
+                                <td>
+                                    Situação
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button ng-click="loadMicroCicloAtleta(-1)">Antes</button> 
+                                    {{microCicloAtleta[0].inicio}} a {{microCicloAtleta[0].fim}}
+                                    <button ng-click="loadMicroCicloAtleta(1)">Proximo</button> 
+                                </td>
+                                <td>
+                                    {{(microCicloAtleta[0].situacao===0)?'Não enviado':'Enviado'}}
+                                    <button ng-click="loadMicroCicloAtleta(0)">Atualizar</button> 
+                                    <button ng-click="pageActive='selAtleta';">Voltar</button> 
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div ng-repeat="mct in microCicloTreinosAtleta">
+                            <table>
+                                <tr>
+                                    <td>
+                                        {{mct.diaF}}
+                                        <br><a href="" ng-click="novo(microCicloAtleta[0],mct)">Novo</a>
+                                    </td>
+                                    <td>
+                                        <div ng-repeat="mct_dia in mct.Itens">
+                                            <table ng-show="mct_dia.ctrl_status === 1">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Modalidade</td>
+                                                        <td>Treino</td>
+                                                        <td>Intensidade</td>
+                                                        <td>Percurso</td>
+                                                        <td>Distância</td>
+                                                        <td>Tempo Mín.</td>
+                                                        <td>Tempo Máx.</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><a href="" ng-click="mct_dia.ctrl_status = 2">{{mct_dia.tipos_modalidades.descricao}}</a></td>
+                                                        <td>{{mct_dia.tipos_treinos.descricao}}</td>
+                                                        <td>{{mct_dia.tipos_intensidades.descricao}}</td>
+                                                        <td>{{mct_dia.tipos_percursos.descricao}}</td>
+                                                        <td>{{mct_dia.distancia}} {{mct_dia.tipos_distancias.descricao}}</td>
+                                                        <td>{{mct_dia.tempo_treino_minimo}}</td>
+                                                        <td>{{mct_dia.tempo_treino_maximo}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="7">
+                                                            <table>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            Instruções:
+                                                                        </td>
+                                                                        <td>
+                                                                            <a href="" ng-click="mct_dia.ctrl_status = 2">{{mct_dia.descricao}}</a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <br>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div ng-show="mct_dia.ctrl_status === 2">
+                                                <!--{{mct_dia}}-->
+                                                <form name="myForm">
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Data</td>
+                                                                <td>
+                                                                    <input type="text" ng-model="mct_dia.dia" placeholder="dd/mm/yyy"  min="2013-01-01" max="2020-12-31" required />
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Modalidade</td>
+                                                                <td>
+                                                                    <select ng-options="option.descricao for option in tiposModalidades track by option.codigo"
+                                                                            ng-model="mct_dia.tipos_modalidades">
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Treino</td>
+                                                                <td>
+                                                                    <select ng-options="option.descricao for option in tiposTreinos track by option.codigo"
+                                                                            ng-model="mct_dia.tipos_treinos">
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Intensidade</td>
+                                                                <td>
+                                                                    <select ng-options="option.descricao for option in tiposIntensidades track by option.codigo"
+                                                                            ng-model="mct_dia.tipos_intensidades">
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Percurso</td>
+                                                                <td>
+                                                                    <select ng-options="option.descricao for option in tiposPercursos track by option.codigo"
+                                                                            ng-model="mct_dia.tipos_percursos">
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Distância</td>
+                                                                <td>
+                                                                    <input type="text" ng-model="mct_dia.distancia" required>
+                                                                    <select ng-options="option.descricao for option in tiposDistancias track by option.codigo"
+                                                                            ng-model="mct_dia.tipos_distancias">
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Tempo Mín.</td>
+                                                                <td><input type="text" ng-model="mct_dia.tempo_treino_minimo" required /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Tempo Máx.</td>
+                                                                <td><input type="text" ng-model="mct_dia.tempo_treino_maximo" required /></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Instruções:</td>
+                                                                <td><textarea ng-model="mct_dia.descricao" required></textarea></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <button ng-click="gravar(mct_dia)">Gravar</button>
+                                                    <button ng-click="excluir(mct_dia,mct)">Excluir</button>
+                                                    <button ng-click="mct_dia.ctrl_status = 1">Cancelar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{microCicloAtleta[0].comentario_treinador}}
+                    </td>
+                </tr>
+            </table>
+
+
+        </div>
+
+
+    </body>
+</html>

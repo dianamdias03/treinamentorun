@@ -4,31 +4,43 @@ var treinoApp = angular.module('TreinoApp', ['ngRoute']);
 treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $http, cadastros)
 {
     $rootScope.activetab = $location.path();
-    $scope.pageActive = 'selAtleta';
-
-    $scope.page = 'Pagina do treinador';
     $scope.listaRegistros = [];
     $scope.microCicloAtleta = [];
 
-    $scope.tiposTreino = [{"i_clientes": 1, "i_tipos_treinos": 1, "descricao": "Não informado"}, {"i_clientes": 1, "i_tipos_treinos": 2, "descricao": "Continuo"}, {"i_clientes": 1, "i_tipos_treinos": 3, "descricao": "Intervalado"}, {"i_clientes": 1, "i_tipos_treinos": 4, "descricao": "Fartlek"}, {"i_clientes": 1, "i_tipos_treinos": 5, "descricao": "Regenerativo"}, {"i_clientes": 1, "i_tipos_treinos": 6, "descricao": "Ritmo"}, {"i_clientes": 1, "i_tipos_treinos": 7, "descricao": "Longo"}, {"i_clientes": 1, "i_tipos_treinos": 8, "descricao": "Prova"}];
+    $scope.selecionarAtleta = function (item) {
+        $scope.atletaSelecionado = true;
+        $scope.atleta = item;
+        $scope.loadMicroCicloAtleta(0);
+    };
 
-    $scope.execAcao = function (acao, item) {
-        $scope.Acao = 'Clicou: ' + acao + '>' + item.nome;
-        $scope.Atleta = item;
-    }
+    $scope.newLineToBR = function (text) {
+        var lista = [];
+        var arrayStr = [];
 
-    $scope.selectPage = function (page, item) {
-        $scope.Atleta = item;
-        $scope.pageActive = page;
+        if (text === undefined) {
+            lista.push({"linha": 0, "descricao": ''});
+        } else {
+            arrayStr = text.split("\n");
 
-        if ($scope.pageActive === 'criaTreinos') {
-            $scope.loadMicroCicloAtleta(0);
+            for (var i = 0; i < arrayStr.length; i++) {
+                lista.push({"linha": i, "descricao": arrayStr[i]});
+            }
         }
-    }
+
+        return lista;
+    };
 
     $scope.loadMicroCicloAtleta = function (navegacao)
     {
         var diaInicio = "2017-09-18";
+        var codigo_atleta;
+
+        if ($scope.atletaSelecionado) {
+            codigo_atleta = $scope.atleta.codigo;
+        } else {
+            codigo_atleta = 1;
+        }
+
         if ($scope.microCicloAtleta.length > 0) {
             diaInicio = $scope.microCicloAtleta[0].inicio;
         }
@@ -38,7 +50,7 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
                 {
                     params: {
                         "tabela": "atleta_micro_ciclo",
-                        "i_usuarios": $scope.Atleta.i_usuarios,
+                        "i_usuarios": codigo_atleta,
                         "dia": diaInicio,
                         "navegacao": navegacao
                     }
@@ -47,7 +59,12 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
                 .then(function (response) {
                     if (response.data.resultado) {
                         $scope.microCicloAtleta = response.data.registros;
-                        $scope.loadMicroCicloTreinosAtleta($scope.microCicloAtleta[0].i_micro_ciclo);
+                        if ($scope.atletaSelecionado) {
+                            $scope.loadMicroCicloTreinosAtleta($scope.microCicloAtleta[0].i_micro_ciclo);
+                        } else {
+                            $scope.microCicloTreinosAtleta = [];
+                            $scope.loadAtletas();
+                        }
                     }
                 });
     };
@@ -59,8 +76,9 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
                 {
                     params: {
                         "tabela": "atleta_micro_ciclo_treinos",
-                        "i_usuarios": $scope.Atleta.i_usuarios,
+                        "i_usuarios": $scope.atleta.codigo,
                         "i_micro_ciclo": i_micro_ciclo,
+                        "dia": $scope.microCicloAtleta[0].inicio
                     }
                 }
         )
@@ -69,12 +87,38 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
                 });
     };
 
-    $scope.load = function ()
+    $scope.loadAtletas = function ()
     {
-        $http.post("select.jsp", {params: {"tabela": "atletas"}}).then(function (response) {
+        if ($scope.microCicloAtleta.length > 0) {
+            dia = $scope.microCicloAtleta[0].inicio;
+        } else {
+            dia = '2017-10-02';
+        }
+        $http.post("select.jsp", {params: {"tabela": "atletas", "dia": dia}}).then(function (response) {
             $scope.dataParam = response.data;
             $scope.listaRegistros = response.data.registros;
+            $scope.conta = 0;
+            $scope.contaOk = 0;
+            for (i = 0; i < $scope.listaRegistros.length; i++) {
+                if ($scope.listaRegistros[i].Dia2 !== -1 &&
+                        $scope.listaRegistros[i].Dia3 !== -1 &&
+                        $scope.listaRegistros[i].Dia4 !== -1 &&
+                        $scope.listaRegistros[i].Dia5 !== -1 &&
+                        $scope.listaRegistros[i].Dia6 !== -1 &&
+                        $scope.listaRegistros[i].Dia7 !== -1 &&
+                        $scope.listaRegistros[i].Dia8 !== -1) {
+                    $scope.contaOk++;
+                }
+                $scope.conta++;
+            }
+            $scope.progresso = Math.round($scope.contaOk / $scope.conta * 100);
         });
+    }
+
+    $scope.load = function ()
+    {
+//        $scope.loadAtletas();
+        $scope.loadMicroCicloAtleta(0);
 
         $http.post("select.jsp", {params: {"tabela": "tipos_modalidades"}}).then(function (response) {
             $scope.tiposModalidades = response.data.registros;
@@ -126,6 +170,31 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
         });
     }
 
+    $scope.novoDiaFolga = function (mc, mct) {
+        var lParams = {
+            params:
+                    {
+                        "tabela": "micro_ciclo_treinos",
+                        "acao": 1,
+                        "dia": mct.dia,
+                        "i_clientes": mc.i_clientes,
+                        "i_usuarios": mc.i_usuarios,
+                        "i_micro_ciclo": mc.i_micro_ciclo
+
+                    }
+        };
+
+        $http.post("gravar.jsp", lParams).then(function (response) {
+            $scope.retornoGravar = response.data;
+            if ($scope.retornoGravar.resultado) {
+                response.data.registro.ctrl_status = 1;
+                response.data.registro.tipos_modalidades.codigo = 4;
+                mct.Itens.push(response.data.registro);
+                $scope.gravar(response.data.registro);
+            }
+        });
+    }
+
     $scope.excluir = function (mct_dia, mct) {
 
         var lParams = {
@@ -144,5 +213,13 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
             }
         });
     }
+
+    $scope.desSelecionarAtleta = function () {
+        $scope.atletaSelecionado = false;
+        $scope.loadMicroCicloAtleta(0);
+    };
+
+    $scope.desSelecionarAtleta();
+
 
 })

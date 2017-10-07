@@ -6,6 +6,9 @@
 package treinos;
 
 import framework.Conexao;
+import framework.FormatacaoDatas;
+import java.util.Date;
+
 
 /**
  *
@@ -27,8 +30,11 @@ public class MicroCicloSetup {
                 + "where not exists(select 1 from micro_ciclo where micro_ciclo.i_usuarios = usuarios.i_usuarios and micro_ciclo.inicio = cast('" + lsInicioPeriodo + "' as date));";
 
         resultado = conexao.executaComando(sql);
-        if(!resultado) return resultado;
+        if (!resultado) {
+            return resultado;
+        }
 
+        /*
         sql = "insert into micro_ciclo_treinos (i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, i_micro_ciclo_treinos_planejado)\n"
                 + "select i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, i_micro_ciclo_treinos_planejado\n"
                 + "from (\n"
@@ -42,12 +48,39 @@ public class MicroCicloSetup {
                 + "order by tab.i_usuarios, tab.dia;";
 
         resultado = conexao.executaComando(sql);
+        */
 
         return resultado;
     }
 
     public static void main(String[] args) {
+
+        String lsDiaInicio = "04/09/2017";
+        String lsDiaFim = "31/12/2017";
+        FormatacaoDatas formatacaoDatas;
         MicroCicloSetup microCicloSetup = new MicroCicloSetup();
-        microCicloSetup.gerarMicroCiclos("2017-10-02");
+
+        Date diaInicio;
+        Date diaFim;
+
+        diaInicio = FormatacaoDatas.dmyToDate(lsDiaInicio);
+        diaFim = FormatacaoDatas.dmyToDate(lsDiaFim);
+
+        formatacaoDatas = new FormatacaoDatas(diaInicio);
+
+        while (diaFim.after(formatacaoDatas.getDia())) {
+
+            System.out.println(
+                    formatacaoDatas.getDataYMD()
+                    + " " + formatacaoDatas.getDataDMY()
+                    + " " + formatacaoDatas.siglaMes()
+                    + " " + formatacaoDatas.siglaSemana()
+                    + " " + formatacaoDatas.diaMes());
+
+            formatacaoDatas.addDia(7);
+            microCicloSetup.gerarMicroCiclos(formatacaoDatas.getDataYMD());
+
+        }
+
     }
 }
