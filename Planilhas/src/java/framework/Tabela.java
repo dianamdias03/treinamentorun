@@ -64,6 +64,7 @@ public class Tabela {
     }
 
     public void addColunaS(String coluna, String valor) {
+        valor = valor.replaceAll("'", "''");
         addColuna(coluna, "'" + valor + "'");
     }
 

@@ -3,9 +3,11 @@ var treinoApp = angular.module('TreinoApp', ['ngRoute']);
 
 treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $http, cadastros)
 {
-    $rootScope.activetab = $location.path();
     $scope.listaRegistros = [];
     $scope.microCicloAtleta = [];
+    $scope.opcoesMenu = cadastros.getMenus();
+    $scope.nomeCliente = cadastros.getNomeCliente();
+    cadastros.setScope($scope);
 
     $scope.selecionarAtleta = function (item) {
         $scope.atletaSelecionado = true;
@@ -112,12 +114,19 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
                 $scope.conta++;
             }
             $scope.progresso = Math.round($scope.contaOk / $scope.conta * 100);
+//            if (!$scope.ehTreinador){
+//                $scope.selecionarAtleta($scope.listaRegistros[0]);
+//            }
         });
     }
 
     $scope.load = function ()
     {
-//        $scope.loadAtletas();
+        $http.post("sessao.jsp", {}).then(function (response) {
+            $scope.dadosSessao = response.data;
+            $scope.ehTreinador = ($scope.dadosSessao.usuarioDados.cria_planilhas === 1);
+        });
+
         $scope.loadMicroCicloAtleta(0);
 
         $http.post("select.jsp", {params: {"tabela": "tipos_modalidades"}}).then(function (response) {

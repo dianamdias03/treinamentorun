@@ -85,7 +85,6 @@ treinoApp.service('cadastros', function () {
                     this.myScope.listaRegistros = response.data.registros;
                 });
     };
-
     this.load_params = function (parans)
     {
 //        item.status = 4;
@@ -134,6 +133,21 @@ treinoApp.service('cadastros', function () {
     this.login = function (parm) {
         $('#myModal3').modal('show');
 //         $('#myModal3').modal('hide');
+    }
+
+    this.getMenus = function () {
+        var opcoesMenu = [];
+        opcoesMenu.push({"link": './', "descricao": 'Home'});
+//        opcoesMenu.push({"link": './', "descricao": 'Clientes'});
+        opcoesMenu.push({"link": './usuarios.html', "descricao": 'Atletas'});
+        opcoesMenu.push({"link": './treinador.html', "descricao": 'Treinos'});
+//        opcoesMenu.push({"link": './treinador.html', "descricao": 'Meus treinos'});
+        opcoesMenu.push({"link": './login.jsp?acao=1', "descricao": 'Sair'});
+        return opcoesMenu;
+    }
+    
+    this.getNomeCliente = function(){
+        return 'M3 Assessoria Esportiva';
     }
 
     this.getEstadosCidades = function () {

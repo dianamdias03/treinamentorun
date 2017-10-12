@@ -12,29 +12,26 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-        <script src="treino-app.js" type="text/javascript"></script>
+        <script src="index.js" type="text/javascript"></script>
         <script src="js/cadastros.js" type="text/javascript"></script>
     </head>
 
-    <body>
+    <body ng-controller="IndexCtrl">
 
-        <div class="container-fluid" style="background-color:#FFFFFF;color:#555555;height:80px;">
-            <h1>Gerenciamento do Tempo</h1>
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>M3 Assessoria Esportiva</h2>
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
                 <ul class="nav nav-tabs">
-                    <li ng-class="{active: activetab == '/'}"><a href="/home">Home</a></li>
-                    <li ng-class="{active: activetab == '/clientes'}"><a href="./clientes.html">Clientes</a></li>
-                    <li ng-class="{active: activetab == '/usuarios'}"><a href="./usuarios.html">Usuários</a></li>
-                    <li><a href="./treinador.html">Treinador</a></li>
-                    <li ng-class="{active: activetab == '/sobre'}"><a href="/sobre">Sobre</a></li>
-                    <li ng-class="{active: activetab == '/logoff'}"><a href="/logoff">logoff x</a></li>
+                    <li ng-repeat="item in opcoesMenu"><a href="{{item.link}}">{{item.descricao}}</a></li>
                 </ul>
             </div>
         </div>
 
-
+        <br>
         <div ng-view></div>
 
     </body>

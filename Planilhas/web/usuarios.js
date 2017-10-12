@@ -2,10 +2,11 @@
 
 var treinoApp = angular.module('TreinoApp', ['ngRoute']);
 
-treinoApp.controller('ClientesCtrl', function ($scope, $rootScope, $location, $http, cadastros)
+treinoApp.controller('UsuariosCtrl', function ($scope, $rootScope, $location, $http, cadastros)
 {
-    $rootScope.activetab = $location.path();
     $scope.listaRegistros = [];
+    $scope.opcoesMenu=cadastros.getMenus();
+    $scope.nomeCliente=cadastros.getNomeCliente();
 
     $scope.load = function ()
     {

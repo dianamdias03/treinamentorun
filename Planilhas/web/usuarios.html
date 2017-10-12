@@ -16,58 +16,65 @@
         <script src="js/cadastros.js" type="text/javascript"></script>
     </head>
 
-    <body>
+    <body ng-controller="UsuariosCtrl" ng-init="load()">
 
-        <div class="container-fluid" style="background-color:#FFFFFF;color:#555555;height:80px;">
-            <h1>Gerenciamento do Tempo</h1>
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>M3 Assessoria Esportiva</h2>
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
                 <ul class="nav nav-tabs">
-                    <li ng-class="{active: activetab == '/'}"><a href="/home">Home</a></li>
-                    <li ng-class="{active: activetab == '/clientes'}"><a href="./clientes.html">Clientes</a></li>
-                    <li ng-class="{active: activetab == '/usuarios'}"><a href="./usuarios.html">Usuários</a></li>
-                    <li><a href="./treinador.html">Treinador</a></li>
-                    <li ng-class="{active: activetab == '/sobre'}"><a href="/sobre">Sobre</a></li>
-                    <li ng-class="{active: activetab == '/logoff'}"><a href="/logoff">logoff x</a></li>
+                    <li ng-repeat="item in opcoesMenu"><a href="{{item.link}}">{{item.descricao}}</a></li>
                 </ul>
             </div>
         </div>
         <div ng-view></div>
 
-        <div class="container"  ng-controller="ClientesCtrl" ng-init="load()">
-            <h2>Usuários</h2>
-            <!--<p>The .table-striped class adds zebra-stripes to a table:</p>-->
-            <button type="button" class="btn btn-success" ng-click="novo()">Novo</button>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Administrador</th>
-                        <th>Faz Planilhas</th>
-                        <th>Cria Usuários</th>
-                        <th>Cria Eventos</th>
-                        <th>Recebe Planilha</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="item in listaRegistros">
-                        <td>{{item.nome}}</td>
-                        <td>{{item.email}}</td>
-                        <td style="text-align: center"><span ng-show="item.admin === 1" class="label label-success">Sim</span></td>
-                        <td style="text-align: center"><span ng-show="item.cria_planilhas === 1" class="label label-success">Sim</span></td>
-                        <td style="text-align: center"><span ng-show="item.cria_usuarios === 1" class="label label-success">Sim</span></td>
-                        <td style="text-align: center"><span ng-show="item.cria_eventos === 1" class="label label-success">Sim</span></td>
-                        <td style="text-align: center"><span ng-show="item.recebe_planilha === 1" class="label label-success">Sim</span></td>
-                        <td style="text-align: center"><img src="img/editar.png" alt="Editar" ng-click="editar(item)"></td>
-                    </tr>
-                </tbody>
-            </table>
+        <br>
+        <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <h4>Cadastro de atletas</h4>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-success" ng-click="novo()">Novo</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
 
-            {{registro}}
-
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Administrador</th>
+                                <th>Faz Planilhas</th>
+                                <th>Cria Usuários</th>
+                                <th>Cria Eventos</th>
+                                <th>Recebe Planilha</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in listaRegistros">
+                                <td>{{item.nome}}</td>
+                                <td>{{item.email}}</td>
+                                <td style="text-align: center"><span ng-show="item.admin === 1" class="label label-success">Sim</span></td>
+                                <td style="text-align: center"><span ng-show="item.cria_planilhas === 1" class="label label-success">Sim</span></td>
+                                <td style="text-align: center"><span ng-show="item.cria_usuarios === 1" class="label label-success">Sim</span></td>
+                                <td style="text-align: center"><span ng-show="item.cria_eventos === 1" class="label label-success">Sim</span></td>
+                                <td style="text-align: center"><span ng-show="item.recebe_planilha === 1" class="label label-success">Sim</span></td>
+                                <td style="text-align: center"><img src="img/editar.png" alt="Editar" ng-click="editar(item)"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <form>
                 <div id="myModal" class="modal fade bd-example-modal-lg" role="dialog">
                     <div class="modal-dialog modal-lg" role="document">

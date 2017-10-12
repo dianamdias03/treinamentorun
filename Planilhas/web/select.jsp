@@ -1,3 +1,4 @@
+<%@page import="framework.SessaoUsuario"%>
 <%@page import="framework.FormatacaoDatas"%>
 <%@page import="framework.Arquivo"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -31,7 +32,8 @@
 //        jsonObj = new JSONObject();
 //        jsonObj.put("params", jsonObjParams);
 //        params = jsonObj.toString();
-        params = "{\"params\":{\"tabela\":\"atleta_micro_ciclo_treinos\",\"i_usuarios\":4,\"i_micro_ciclo\":19}}";
+//        params = "{\"params\":{\"tabela\":\"atleta_micro_ciclo_treinos\",\"i_usuarios\":4,\"i_micro_ciclo\":19}}";
+        params = "{\"params\":{\"tabela\":\"tipos_modalidades\",\"i_usuarios\":4,\"i_micro_ciclo\":19}}";
     }
 
     try {
@@ -54,25 +56,36 @@
     int i_clientes = 1;
 
     if (tabela.equals("usuarios")) {
-        sql = "select i_usuarios as codigo, i_clientes, nome, email, senha, data_nascto, "
-                + "admin, cria_planilhas, cria_usuarios, cria_eventos, recebe_planilha, "
-                + "cpf, rg, endereco, cidade, estado, cep, "
-                + "observacoes, telefone_1, telefone_2 "
-                + "from usuarios "
-                + "order by 1, 2";
+        if (SessaoUsuario.isPermissao(session, "cria_usuarios")) {
+            sql = "select i_usuarios as codigo, i_clientes, nome, email, senha, data_nascto, "
+                    + "admin, cria_planilhas, cria_usuarios, cria_eventos, recebe_planilha, "
+                    + "cpf, rg, endereco, cidade, estado, cep, "
+                    + "observacoes, telefone_1, telefone_2 "
+                    + "from usuarios "
+                    + "order by 1, 2";
+        }
     }
     if (tabela.equals("atletas")) {
         String dia = jsonObj.getJSONObject("params").optString("dia", "2017-09-25");
+        String lsWhere = "";
         dia = "cast('" + dia + "' as date)";
+
+        JSONObject jsonRetorno = (new SessaoUsuario(session)).getUsuarios();
+        jsonRetorno = jsonRetorno.getJSONObject("usuarioDados");
+        if (jsonRetorno.optInt("cria_planilhas", 0) == 0) {
+            lsWhere = " where i_usuarios=" + jsonRetorno.optInt("codigo", 0) + " ";
+        }
+
         sql = "select i_usuarios as codigo, i_clientes, nome, email,"
-                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 0 day ) ),-1 ) as Dia2,"
-                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 1 day ) ),-1 ) as Dia3,"
-                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 2 day ) ),-1 ) as Dia4,"
-                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 3 day ) ),-1 ) as Dia5,"
-                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 4 day ) ),-1 ) as Dia6,"
-                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 5 day ) ),-1 ) as Dia7,"
-                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( "+dia+", interval 6 day ) ),-1 ) as Dia8"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 0 day ) ),-1 ) as Dia2,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 1 day ) ),-1 ) as Dia3,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 2 day ) ),-1 ) as Dia4,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 3 day ) ),-1 ) as Dia5,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 4 day ) ),-1 ) as Dia6,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 5 day ) ),-1 ) as Dia7,"
+                + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 6 day ) ),-1 ) as Dia8"
                 + "  from usuarios u "
+                + " " + lsWhere
                 + " order by 1, 2";
     }
     if (tabela.equals("atleta_micro_ciclo")) {
@@ -93,7 +106,7 @@
         sql = "select i_micro_ciclo_treinos as codigo, i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, "
                 + "i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, "
                 + "tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, "
-                + "i_micro_ciclo_treinos_planejado,"
+                + "i_micro_ciclo_treinos_planejado, feedback,"
                 + "(select s.descricao from tipos_modalidades s where s.i_clientes=p.i_clientes and s.i_tipos_modalidades=p.i_tipos_modalidades) as s_tipos_modalidades, "
                 + "(select s.descricao from tipos_treinos s where s.i_clientes=p.i_clientes and s.i_tipos_treinos=p.i_tipos_treinos) as s_tipos_treinos, "
                 + "(select s.descricao from tipos_intensidades s where s.i_clientes=p.i_clientes and s.i_tipos_intensidades=p.i_tipos_intensidades) as s_tipos_intensidades, "
@@ -122,7 +135,13 @@
 
 //    out.print(sql);
     Arquivo.gravarLog("sql: " + sql);
-    JSONArray dados = rsJson.getJsonBySQLStr(sql);
+    JSONArray dados;
+
+    if (sql.equals("")) {
+        dados = new JSONArray();
+    } else {
+        dados = rsJson.getJsonBySQLStr(sql);
+    }
 
     if (tabela.equals("atleta_micro_ciclo_treinos")) {
         FormatacaoDatas formatacaoDatas;
@@ -230,7 +249,7 @@
     JSONObject jsonRetorno = new JSONObject();
     jsonRetorno.put("registros", dados);
     jsonRetorno.put("params", jsonObj);
-    jsonRetorno.put("resultado", dados.length() > 0);
+    jsonRetorno.put("resultado", (dados != null && dados.length() > 0));
 
     out.print(jsonRetorno.toString());
 

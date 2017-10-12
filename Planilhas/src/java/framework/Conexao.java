@@ -1,10 +1,6 @@
 package framework;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Conexao {
 
@@ -13,16 +9,23 @@ public class Conexao {
 
     public boolean conectar() {
         try {
+            //Class.forName("sun.jdbc.odbc.JdbcOdbcDriver") ;
+//            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver") ;
             Class.forName("com.mysql.jdbc.Driver").newInstance();
         } catch (Exception ex) {
             System.out.println("Erro carregando a classe");
             System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLException: " + ex.toString());
         }
 
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost/treinos?user=root&password=a1b2c3");
+
+//            Connection conn = DriverManager.getConnection("jdbc:sybase:Tds:localhost:2638?ServiceName=treinos","dba","sql");
+//            Connection con = DriverManager.getConnection("jdbc:odbc:DSN= Adaptive Server Anywhere 9.0 Sample" );
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("Erro conectando");
+            System.out.println("SQLException: x " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
             return false;
@@ -77,6 +80,15 @@ public class Conexao {
 
     public String getTeste() {
         return "Texto de teste";
+    }
+
+    public static void main(String[] args) {
+        Conexao conexao = new Conexao();
+        if (conexao.conectar()) {
+            conexao.executaSelect("select 1 from dummy");
+        } else {
+            System.out.println("Não conectou");
+        }
     }
 
 }

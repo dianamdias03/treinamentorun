@@ -8,8 +8,6 @@ package treinos;
 import framework.Arquivo;
 import framework.RegistroJson;
 import framework.Tabela;
-import javax.servlet.jsp.JspWriter;
-import org.apache.jasper.runtime.JspWriterImpl;
 import org.json.JSONObject;
 
 /**
@@ -40,6 +38,7 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
         getTabela().addColuna("i_tipos_distancias", jsonDados.getJSONObject("tipos_distancias").optString("codigo", ""));
         getTabela().addColuna("i_tipos_percursos", jsonDados.getJSONObject("tipos_percursos").optString("codigo", ""));
         getTabela().addColunaS("descricao", jsonDados.optString("descricao", ""));
+        getTabela().addColunaS("feedback", jsonDados.optString("feedback", ""));
         getTabela().addColunaI("tempo_treino_minimo", jsonDados.optInt("tempo_treino_minimo", 0));
         getTabela().addColunaI("tempo_treino_maximo", jsonDados.optInt("tempo_treino_maximo", 0));
         getTabela().addColunaI("tempo_treino_realizado", jsonDados.optInt("tempo_treino_realizado", 0));
@@ -71,6 +70,7 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
         registro.setItem("tipos_distancias", 1, "km");
         registro.setItem("tipos_percursos", 1, "Não informado");
         registro.setItem("descricao", "");
+        registro.setItem("feedback", "");
         registro.setItem("i_clientes", this.getGerenciaRequests().getNodeParams().optInt("i_clientes", 0));
         registro.setItem("i_usuarios", this.getGerenciaRequests().getNodeParams().optInt("i_usuarios", 0));
         registro.setItem("i_micro_ciclo", this.getGerenciaRequests().getNodeParams().optInt("i_micro_ciclo", 0));
