@@ -141,6 +141,7 @@ treinoApp.service('cadastros', function () {
 //        opcoesMenu.push({"link": './', "descricao": 'Clientes'});
         opcoesMenu.push({"link": './usuarios.html', "descricao": 'Atletas'});
         opcoesMenu.push({"link": './treinador.html', "descricao": 'Treinos'});
+        opcoesMenu.push({"link": './treinosSemanalAtleta.html', "descricao": 'Meus Treinos'});
 //        opcoesMenu.push({"link": './treinador.html', "descricao": 'Meus treinos'});
         opcoesMenu.push({"link": './login.jsp?acao=1', "descricao": 'Sair'});
         return opcoesMenu;

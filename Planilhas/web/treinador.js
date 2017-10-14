@@ -179,6 +179,21 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
         });
     }
 
+    $scope.enviarPlanilha = function (item) {
+        var lParams = {
+            params:
+                    {
+                        "enviarPlanilha": $scope.microCicloAtleta[0],
+                        "atleta": $scope.atleta
+
+                    }
+        };
+
+        $http.post("gravar.jsp", lParams).then(function (response) {
+            $scope.retornoGravar = response.data;
+        });
+    }
+
     $scope.novoDiaFolga = function (mc, mct) {
         var lParams = {
             params:

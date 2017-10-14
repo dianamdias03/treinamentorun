@@ -2,7 +2,7 @@
 <html ng-app="TreinoApp">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Controle de tempo</title>
+        <title>M3</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -105,14 +105,15 @@
                         <div class="col-md-5">
                             <h3 ng-show="atletaSelecionado">Atleta: {{atleta.nome}}</h3>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <div class="btn-group" role="group" aria-label="...">
                                 <button type="button" class="btn btn-default" ng-click="loadMicroCicloAtleta( - 1)">Anterior</button>
                                 <button type="button" class="btn btn-default" ng-click="loadMicroCicloAtleta(0)">{{microCicloAtleta[0].inicioF}} a {{microCicloAtleta[0].fimF}}</button>
                                 <button type="button" class="btn btn-default" ng-click="loadMicroCicloAtleta(1)">Próximo</button>
                             </div>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default" ng-click="enviarPlanilha(microCicloTreinosAtleta)" ng-show="atletaSelecionado">Enviar</button>
                             <button type="button" class="btn btn-default" ng-click="desSelecionarAtleta()" ng-show="atletaSelecionado">Voltar</button>
                         </div>
                     </div>

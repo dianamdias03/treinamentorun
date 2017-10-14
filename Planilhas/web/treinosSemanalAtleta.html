@@ -1,0 +1,142 @@
+<!doctype html>
+<html ng-app="TreinoApp">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>M3</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <script src="treinosSemanalAtleta.js" type="text/javascript"></script>
+        <script src="js/cadastros.js" type="text/javascript"></script>
+    </head>
+
+    <body ng-controller="PlanilhaSemanalCtrl">
+
+        <div class="row">
+            <div class="col-sm-10">
+                <h2>M3 Assessoria Esportiva</h2>
+            </div>
+            <div class="col-sm-2">
+                {{usuarioDados.nome}}
+                <br>{{usuarioDados}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs">
+                    <li ng-repeat="item in opcoesMenu"><a href="{{item.link}}">{{item.descricao}}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div ng-view></div>
+
+        <div class="container">
+            <br> {{dia}}
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-md-5">
+                        <h3>Atleta: {{planilhaSemanal.nome}}</h3>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="button" class="btn btn-default" ng-click="loadPlanilhaSemana(-1)">Anterior</button>
+                            <button type="button" class="btn btn-default" ng-click="loadPlanilhaSemana(0)">{{planilhaSemanal.inicioFormatado}} a {{planilhaSemanal.fimFormatado}}</button>
+                            <button type="button" class="btn btn-default" ng-click="loadPlanilhaSemana(1)">Próximo</button>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" ng-repeat="mct in planilhaSemanal.semana">
+                <div class="form-group col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <table style="width: 100%">
+                                <tr>
+                                    <td style="alignment-adjust: central">
+                                        <b>{{mct.diaF}} - {{mct.diaS}}</b>
+                                        <!--<span ng-show="mct.Itens.length > 0" class="label label-success"> OK</span>-->
+                                    </td>
+                                    <td style="alignment-adjust: central">
+                                    </td>
+                                    <td style="text-align: right">
+                                        <button type="button" class="btn btn-success" ng-click="novo(microCicloAtleta[0], mct)" ng-show="ehTreinador">Novo</button>
+                                        <button type="button" class="btn btn-success" ng-click="novoDiaFolga(microCicloAtleta[0], mct)" ng-show="ehTreinador">Folga</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-body">
+                            <div ng-repeat="mct_dia in mct.Itens">
+                                <div ng-show="mct_dia.tipos_modalidades.codigo === 4">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <table style="width: 100%">
+                                                        <tr>
+                                                            <td style="width: 40%"></td>
+                                                            <td style="text-align: center">
+                                                                <pre style="background: #FAFF8D">-- FOLGA --</pre>
+                                                            </td>
+                                                            <td style="width: 40%"></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div ng-show="mct_dia.tipos_modalidades.codigo !== 4">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <p>
+                                                <b>Modalidade: </b>
+                                                {{mct_dia.tipos_modalidades.descricao}}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <b>Treino: </b>
+                                            {{mct_dia.tipos_treinos.descricao}}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <b>Intensidade: </b>
+                                            {{mct_dia.tipos_intensidades.descricao}}
+                                        </div>
+                                        <div class="col-md-2">
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <b>Instruções:</b>
+                                        </div>
+                                        <div class="col-md-11">
+                                            <pre style="background: white; font-size: medium">{{mct_dia.descricao}}</pre>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <hr align="center" width="100%" size="1" color=red>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </body>
+</html>
