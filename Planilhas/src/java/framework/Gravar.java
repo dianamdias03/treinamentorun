@@ -37,6 +37,8 @@ public abstract class Gravar {
         conexao.conectar();
         resultado = conexao.executaComando(sql);
         this.lastID = conexao.lastID;
+        
+        conexao.desconectar();
 
         return resultado;
 

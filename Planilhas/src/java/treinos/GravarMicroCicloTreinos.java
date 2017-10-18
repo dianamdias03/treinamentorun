@@ -124,6 +124,7 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
             } catch (IOException ex) {
                 Arquivo.gravarLog("Erro executando comando SQL na listagem de micro_ciclo_treinos: " + ex.getMessage());
             }
+            conexao.desconectar();
         }
 
         FormatacaoDatas formatacaoDatas;
@@ -199,7 +200,7 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
             dados2.put(jsonNew);
             formatacaoDatas.addDia(1);
         }
-
+        
         dados = dados2;
 
         return dados;

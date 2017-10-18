@@ -1,12 +1,14 @@
 package framework;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Conexao {
-
+    
     Connection conn = null;
     public long lastID;
-
+    
     public boolean conectar() {
         try {
             //Class.forName("sun.jdbc.odbc.JdbcOdbcDriver") ;
@@ -17,12 +19,10 @@ public class Conexao {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLException: " + ex.toString());
         }
-
+        
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/treinos?user=root&password=a1b2c3");
-
-//            Connection conn = DriverManager.getConnection("jdbc:sybase:Tds:localhost:2638?ServiceName=treinos","dba","sql");
-//            Connection con = DriverManager.getConnection("jdbc:odbc:DSN= Adaptive Server Anywhere 9.0 Sample" );
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/treinos?user=root&password=FUOKs3BD_");
+            
         } catch (SQLException ex) {
             System.out.println("Erro conectando");
             System.out.println("SQLException: x " + ex.getMessage());
@@ -30,15 +30,15 @@ public class Conexao {
             System.out.println("VendorError: " + ex.getErrorCode());
             return false;
         }
-
+        
         return true;
     }
-
+    
     public ResultSet executaSelect(String sql) {
-
+        
         Statement stmt = null;
         ResultSet rs = null;
-
+        
         try {
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
@@ -49,19 +49,19 @@ public class Conexao {
             Arquivo.gravarLog("SQLState: " + ex.getSQLState());
             Arquivo.gravarLog("VendorError: " + ex.getErrorCode());
         }
-
+        
         return rs;
     }
-
+    
     public boolean executaComando(String sql) {
-
+        
         Statement stmt = null;
-
+        
         try {
             stmt = conn.createStatement();
             //stmt.execute(sql);
             stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-
+            
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 lastID = rs.getInt(1);
@@ -74,14 +74,22 @@ public class Conexao {
             Arquivo.gravarLog("VendorError: " + ex.getErrorCode());
             return false;
         }
-
+        
         return true;
     }
-
+    
     public String getTeste() {
         return "Texto de teste";
     }
-
+    
+    public void desconectar() {
+        try {
+            conn.close();
+        } catch (SQLException ex) {
+            Arquivo.gravarLog("Erro desconectando - " + ex.getMessage());
+        }
+    }
+    
     public static void main(String[] args) {
         Conexao conexao = new Conexao();
         if (conexao.conectar()) {
@@ -90,5 +98,5 @@ public class Conexao {
             System.out.println("Não conectou");
         }
     }
-
+    
 }

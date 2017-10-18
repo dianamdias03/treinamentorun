@@ -29,6 +29,6 @@ public class Arquivo {
     }
     
     public static void gravarLog(String conteudo){
-        gravaArquivo("c:\\temp\\log_t.txt", conteudo, true);
+        //gravaArquivo("c:\\temp\\log_t.txt", conteudo, true);
     }
 }

@@ -7,19 +7,29 @@ CREATE TABLE clientes (
      PRIMARY KEY (i_clientes)
 );
 
-DROP TABLE usuarios;
+-- DROP TABLE usuarios;
 CREATE TABLE usuarios (
-    i_usuarios INT NOT NULL AUTO_INCREMENT,
-    i_clientes INT NOT NULL,
-    nome CHAR(128) NOT NULL,
-    email CHAR(128) NOT NULL,
-    senha CHAR(128) NOT NULL,
-    admin INT NOT NULL,
-    cria_planilhas INT NOT NULL,
-    cria_usuarios INT NOT NULL, 
-    cria_eventos INT NOT NULL,
-    recebe_planilha INT NOT NULL,
-    PRIMARY KEY (i_usuarios)
+  i_usuarios int(11) NOT NULL AUTO_INCREMENT,
+  i_clientes int(11) NOT NULL,
+  nome char(128) NOT NULL,
+  email char(128) NOT NULL,
+  senha char(128) NOT NULL,
+  admin int(11) NOT NULL,
+  cria_planilhas int(11) NOT NULL,
+  cria_usuarios int(11) NOT NULL,
+  cria_eventos int(11) NOT NULL,
+  recebe_planilha int(11) NOT NULL,
+  cpf varchar(14) DEFAULT NULL,
+  rg varchar(14) DEFAULT NULL,
+  endereco varchar(64) DEFAULT NULL,
+  cidade varchar(64) DEFAULT NULL,
+  estado varchar(2) DEFAULT NULL,
+  cep varchar(10) DEFAULT NULL,
+  observacoes varchar(2048) DEFAULT NULL,
+  data_nascto date DEFAULT NULL,
+  telefone_1 varchar(20) DEFAULT NULL,
+  telefone_2 varchar(20) DEFAULT NULL,
+  PRIMARY KEY (i_usuarios)
 );
 
 insert into clientes (nome) values('M3 Acessoria');
@@ -159,14 +169,26 @@ insert into semana values( 5, 'Quinta-feira', 'Qui');
 insert into semana values( 6, 'Sexta-feira', 'Sex');
 insert into semana values( 7, 'Sabado', 'Sab');
 
--- 30/09/2017 --------------------------------
-alter table usuarios add cpf varchar(14);
-alter table usuarios add rg varchar(14);
-alter table usuarios add endereco varchar(64);
-alter table usuarios add cidade varchar(64);
-alter table usuarios add estado varchar(2);
-alter table usuarios add cep varchar(10);
-alter table usuarios add observacoes varchar(2048);
 
 -- 08/10/2017 --------------------------------
 alter table micro_ciclo_treinos add feedback varchar(2048);
+
+-- 16/10/2017 --------------------------------
+create table treinosPreCadastrados(
+	i_treinosPreCadastrados  INT NOT NULL AUTO_INCREMENT,
+	descricao varchar(2048),
+    primary key(i_treinosPreCadastrados)
+);
+insert into treinosPreCadastrados (descricao) values('- 5min caminhada firme\n- 60min(8min corrida leve + 2min caminhada firme)' );
+insert into treinosPreCadastrados (descricao) values('- 5min caminhada firme\n- 5x( 8min corrida leve+1min caminhada)\n- 5min caminhada bem firme');
+insert into treinosPreCadastrados (descricao) values('- 6x( 3min caminhada firme+- 5min corrida leve+2min corrida firme)');
+insert into treinosPreCadastrados (descricao) values('- 10min caminhada bem firme\n- 50min( 8min corrida leve +2min caminhada)');
+insert into treinosPreCadastrados (descricao) values('- 5min caminhada firme\n- 60min(5min corrida leve + 1min caminhada firme)');
+insert into treinosPreCadastrados (descricao) values('- 5min caminhada firme\n- 5x( 7min corrida leve+1min caminhada)');
+insert into treinosPreCadastrados (descricao) values('- 7x(2min caminhada leve+7min corrida leve)');
+insert into treinosPreCadastrados (descricao) values('- 5min caminhada forte\n- 5x(1min corrida bem forte+2min caminhada)');
+insert into treinosPreCadastrados (descricao) values('- 10min caminhada firme\n- 40min(4min corrida leve + 1min caminhada firme)');
+insert into treinosPreCadastrados (descricao) values('- 5min caminhada firme\n- 45min( 3min corrida leve+2min caminhada)');
+insert into treinosPreCadastrados (descricao) values('- 6x(3min caminhada leve+7min corrida leve)');
+
+

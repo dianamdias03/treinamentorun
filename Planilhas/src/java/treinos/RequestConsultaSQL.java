@@ -5,10 +5,8 @@
  */
 package treinos;
 
-import framework.Arquivo;
 import framework.FormatacaoDatas;
 import framework.RequestsAction;
-import java.sql.Date;
 import org.json.JSONObject;
 
 public class RequestConsultaSQL extends RequestsAction {
@@ -24,6 +22,9 @@ public class RequestConsultaSQL extends RequestsAction {
 
         if (getParams().optString("consulta").equals("planilhaSemanal")) {
             retorno = consultaPlanilhaSemanal();
+        }else if (getParams().optString("consulta").equals("treinosPreCadastrados")) {
+            ConsultasSQL consultasSQL = new ConsultasSQL();
+            retorno = consultasSQL.treinosPreCadastrados();
         }
         return retorno;
     }
@@ -51,8 +52,6 @@ public class RequestConsultaSQL extends RequestsAction {
         retorno.put("dia", formatacaoDatas.getDataYMD());
         retorno.put("getParams", getParams());
         retorno.put("Acao", "Consulta SQL");
-
-        Arquivo.gravarLog("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" + retorno.toString());
 
         return retorno;
     }

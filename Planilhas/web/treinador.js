@@ -1,10 +1,11 @@
 
-var treinoApp = angular.module('TreinoApp', ['ngRoute']);
+var treinoApp = angular.module('TreinoApp', ['ngRoute', 'ngSanitize']);
 
-treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $http, cadastros)
+treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $http, cadastros, $sanitize)
 {
     $scope.listaRegistros = [];
     $scope.microCicloAtleta = [];
+    $scope.treinosPreCadastrados = [];
     $scope.opcoesMenu = cadastros.getMenus();
     $scope.nomeCliente = cadastros.getNomeCliente();
     cadastros.setScope($scope);
@@ -124,7 +125,9 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
     {
         $http.post("sessao.jsp", {}).then(function (response) {
             $scope.dadosSessao = response.data;
-            $scope.ehTreinador = ($scope.dadosSessao.usuarioDados.cria_planilhas === 1);
+            if(!$scope.dadosSessao.logado){
+                document.location.href = './login.html';
+            };
         });
 
         $scope.loadMicroCicloAtleta(0);
@@ -194,7 +197,7 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
         });
     }
 
-    $scope.novoDiaFolga = function (mc, mct) {
+    $scope.TreinoFixos = function (mc, mct, tipo) {
         var lParams = {
             params:
                     {
@@ -212,12 +215,36 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
             $scope.retornoGravar = response.data;
             if ($scope.retornoGravar.resultado) {
                 response.data.registro.ctrl_status = 1;
-                response.data.registro.tipos_modalidades.codigo = 4;
+                if (tipo === 1) {
+                    response.data.registro.tipos_modalidades.codigo = 4;
+                }
+                if (tipo === 2) {
+                    response.data.registro.tipos_modalidades.codigo = 1;
+                    response.data.registro.descricao = 'Treino coletivo as 19:30 no Parque das Nacoes';
+                }
+                $scope.xxx = response.data.registro;
                 mct.Itens.push(response.data.registro);
                 $scope.gravar(response.data.registro);
             }
         });
     }
+
+    $scope.loadTreinosPreCadastrados = function () {
+        $http.post(
+                "gravar.jsp",
+                {
+                    params: {
+                        "acao-gravar": "consultaSQL",
+                        "consulta": "treinosPreCadastrados"
+                    }
+                }
+        )
+                .then(function (response) {
+                    if (response.data.resultado === true) {
+                        $scope.treinosPreCadastrados = response.data.dados;
+                    }
+                });
+    };
 
     $scope.excluir = function (mct_dia, mct) {
 
@@ -244,6 +271,19 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
     };
 
     $scope.desSelecionarAtleta();
+    $scope.loadTreinosPreCadastrados();
+
+    $scope.showTreinosPreCadastrados = function (item) {
+        $scope.registroEmEdicao = item;
+        $('#treinosPreCadastrados').modal('show');
+    }
+
+    $scope.selecionaTreinosPreCadastrados = function (item) {
+        $scope.registroEmEdicao.descricao = item.descricao;
+        $('#treinosPreCadastrados').modal('hide');
+    }
+
+
 
 
 })

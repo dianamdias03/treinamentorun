@@ -1,3 +1,4 @@
+<%@page import="framework.Arquivo"%>
 <%@page import="framework.SessaoUsuario"%>
 <%@page import="java.io.InputStreamReader"%>
 <%@page import="java.io.BufferedReader"%>
@@ -7,6 +8,7 @@
     String senha = "";
     String msg = "";
     String params;
+    boolean sucesso = false;
 
     if (request.getParameter("acao") == null) {
 
@@ -36,25 +38,23 @@
 
         if (sessaoUsuario.validaUsuarioSenha(usuario, senha)) {
             session.setAttribute("emailUsuario", usuario);
-            JSONObject jsonRetorno = sessaoUsuario.getUsuarios();
-            session.setAttribute("i_clientes", jsonRetorno.optInt("i_clientes", 0));
-            session.setAttribute("i_usuarios", jsonRetorno.optInt("codigo", 0));
-            session.setAttribute("cria_planilhas", jsonRetorno.optInt("cria_planilhas", 0));
+            Arquivo.gravarLog("Usuário logado: "+usuario);
+            sucesso = true;
         } else {
-            session.removeAttribute("emailUsuario");
+            session.invalidate();
             msg = "Usuário ou senha inválido!";
+            sucesso = false;
         }
 
         JSONObject jsonRetorno = new JSONObject();
-        jsonRetorno.put("resultado", (session.getAttribute("emailUsuario") != null));
+        jsonRetorno.put("resultado", sucesso);
         jsonRetorno.put("usuario", usuario);
-//        jsonRetorno.put("senha", senha);
-//        jsonRetorno.put("params", params);
         jsonRetorno.put("msg", msg);
         jsonRetorno.put("get", request.getParameter("acao"));
 
         out.print(jsonRetorno.toString());
     } else {
+        session.invalidate();
         out.print("<html>");
         out.print("<body>");
         out.print("<script>document.location.href = './login.html';</script>");

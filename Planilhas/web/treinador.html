@@ -9,6 +9,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
@@ -38,8 +39,6 @@
 
 
         <div class="container" ng-init="load()">
-            <!--{{opcoesMenu}}-->
-            <!--{{ehTreinador}} - {{dadosSessao}}-->
             <br>            
             <div ng-show="!atletaSelecionado">
                 <div class="panel panel-default">
@@ -132,8 +131,9 @@
                                         <td style="alignment-adjust: central">
                                         </td>
                                         <td style="text-align: right">
-                                            <button type="button" class="btn btn-success" ng-click="novo(microCicloAtleta[0], mct)" ng-show="ehTreinador">Novo</button>
-                                            <button type="button" class="btn btn-success" ng-click="novoDiaFolga(microCicloAtleta[0], mct)" ng-show="ehTreinador">Folga</button>
+                                            <button type="button" class="btn btn-success" ng-click="novo(microCicloAtleta[0], mct)">Novo</button>
+                                            <button type="button" class="btn btn-success" ng-click="TreinoFixos(microCicloAtleta[0], mct, 1)">Folga</button>
+                                            <button type="button" class="btn btn-success" ng-click="TreinoFixos(microCicloAtleta[0], mct, 2)">Coletivo</button>
                                         </td>
                                     </tr>
                                 </table>
@@ -186,24 +186,24 @@
                                             </div>
                                             <div class="col-md-11">
                                                 <pre style="background: white; font-size: medium">{{mct_dia.descricao}}</pre>
-<!--                                                <p class="text-right">
-                                                    <button type="button" class="btn btn-success" ng-click="">Feedback</button>
-                                                </p>-->
+                                                <!--                                                <p class="text-right">
+                                                                                                    <button type="button" class="btn btn-success" ng-click="">Feedback</button>
+                                                                                                </p>-->
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-1">
-                                                <b>Como foi o treino?</b>
-                                            </div>
-                                            <div class="col-md-10">
-                                                <textarea id="inputInstrucoes" class="form-control" ng-model="mct_dia.feedback" rows="3"></textarea>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <p class="text-left">
-                                                    <button type="button" class="btn btn-success" ng-click="gravar(mct_dia)">Gravar</button>
-                                                </p>
-                                            </div>
-                                        </div>
+                                        <!--                                        <div class="row">
+                                                                                    <div class="col-md-1">
+                                                                                        <b>Como foi o treino?</b>
+                                                                                    </div>
+                                                                                    <div class="col-md-10">
+                                                                                        <textarea id="inputInstrucoes" class="form-control" ng-model="mct_dia.feedback" rows="3"></textarea>
+                                                                                    </div>
+                                                                                    <div class="col-md-1">
+                                                                                        <p class="text-left">
+                                                                                            <button type="button" class="btn btn-success" ng-click="gravar(mct_dia)">Gravar</button>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>-->
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <hr align="center" width="100%" size="1" color=red>
@@ -247,6 +247,7 @@
                                                                 <div class="form-group col-md-12">
                                                                     <label for="inputInstrucoes" class="col-form-label">Instruções</label>
                                                                     <textarea id="inputInstrucoes" class="form-control" ng-model="mct_dia.descricao" rows="8"></textarea>
+                                                                    <a href="" ng-click="showTreinosPreCadastrados(mct_dia)">Treino precadastrado...</a>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
@@ -418,6 +419,43 @@
                     </div>
                 </div>
             </form>
+        </div>
+
+
+        <div id="treinosPreCadastrados" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="classInfo" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title" id="classModalLabel">
+                            Treinos pré cadastrados
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        Treinos
+                        <div class="scrollit" style="overflow:scroll; height:500px;">
+                            <table class="table table-bordered table-hover">
+                                <tr ng-repeat="item in treinosPreCadastrados">
+                                    <td ng-click="selecionaTreinosPreCadastrados(item)">
+                                        <!--<pre style="width: 800px">-->
+                                        <p ng-bind-html="item.descricaoF"/>
+
+                                        <!--</pre>-->
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
 

@@ -17,8 +17,8 @@ treinoApp.controller('PlanilhaSemanalCtrl', function ($scope, $rootScope, $locat
                     params: {
                         "acao-gravar": "consultaSQL",
                         "consulta": "planilhaSemanal",
-                        "i_clientes": 1,
-                        "i_usuarios": 4,
+                        "i_clientes": $scope.sessaoUsuario.i_clientes,
+                        "i_usuarios": $scope.sessaoUsuario.i_usuarios,
                         "navegacao": navegacao,
                         "dia": $scope.dia
                     }
@@ -27,11 +27,20 @@ treinoApp.controller('PlanilhaSemanalCtrl', function ($scope, $rootScope, $locat
                 .then(function (response) {
                     $scope.planilhaSemanal = response.data.dados;
                     $scope.dia = response.data.dia;
+                    $scope.resultado = response.data.dados.resultado;
                 });
     };
 
 
-    $scope.loadPlanilhaSemana(0);
+    $scope.loadSessao = function ()
+    {
+        $http.post("sessao.jsp", {params: {}})
+                .then(function (response) {
+                    $scope.sessaoUsuario = response.data;
+                    $scope.loadPlanilhaSemana(0);
+                });
+    };
 
+    $scope.loadSessao();
 
 });

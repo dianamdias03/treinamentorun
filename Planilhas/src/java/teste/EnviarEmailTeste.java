@@ -5,8 +5,6 @@
  */
 package teste;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,8 +43,9 @@ public class EnviarEmailTeste {
 
         Session session = Session.getDefaultInstance(props,
                 new javax.mail.Authenticator() {
+                    @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("m3acessoriaesportiva@zoho.com", "a1b2c3d4");
+                        return new PasswordAuthentication("m3acessoriaesportiva@zoho.com", "2Fcontext61325*0*3556907111810_*");
                     }
                 });
 
@@ -73,7 +72,7 @@ public class EnviarEmailTeste {
         email.setHostName("smtp.zoho.com");
         email.setSmtpPort(465);
         email.setSSLOnConnect(true);
-        email.setAuthentication("m3acessoriaesportiva@zoho.com", "a1b2c3d4");
+        email.setAuthentication("m3acessoriaesportiva@zoho.com", "2Fcontext61325*0*3556907111810_*");
         email.setCharset("UTF-8");
 
         try {

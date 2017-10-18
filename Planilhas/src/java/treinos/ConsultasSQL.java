@@ -5,6 +5,7 @@
  */
 package treinos;
 
+import framework.Arquivo;
 import framework.Conexao;
 import framework.FormatacaoDatas;
 import java.sql.ResultSet;
@@ -23,17 +24,18 @@ public class ConsultasSQL {
     public JSONObject planilhaSemanaAtleta(int i_clientes, int i_usuarios, String inicio) {
 
         JSONObject retorno = new JSONObject();
+        retorno.put("resultado", false);
 
         String sql = "select m.i_micro_ciclo, m.i_clientes, m.i_usuarios, m.inicio, m.fim, "
                 + "          m.situacao, m.comentario_treinador, m.comentario_atleta,\n"
                 + "	     u.nome, u.email\n"
                 + "     from micro_ciclo m,\n"
                 + "          usuarios u \n"
-                + "    where u.i_clientes = "+i_clientes+"\n"
-                + "      and u.i_usuarios = "+i_usuarios+"\n"
+                + "    where u.i_clientes = " + i_clientes + "\n"
+                + "      and u.i_usuarios = " + i_usuarios + "\n"
                 + "      and u.i_clientes = m.i_clientes\n"
                 + "      and u.i_usuarios = m.i_usuarios\n"
-                + "      and m.inicio = date('"+inicio+"');";
+                + "      and m.inicio = date('" + inicio + "');";
 
         Conexao conexao = new Conexao();
         conexao.conectar();
@@ -75,7 +77,10 @@ public class ConsultasSQL {
                     retorno.optString("inicio", "2017-09-18"));
 
             retorno.put("semana", lista);
+            retorno.put("resultado", true);
             
+            conexao.desconectar();
+
         } catch (SQLException ex) {
             Logger.getLogger(ConsultasSQL.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -84,9 +89,47 @@ public class ConsultasSQL {
 
     }
 
+    public JSONObject treinosPreCadastrados() {
+
+        JSONObject retorno = new JSONObject();
+        JSONArray lista = new JSONArray();
+        retorno.put("resultado", false);
+
+        String sql = "select descricao from treinosPreCadastrados order by 1;";
+
+        Conexao conexao = new Conexao();
+        conexao.conectar();
+
+        ResultSet rs = conexao.executaSelect(sql);
+
+        try {
+
+            while (rs.next()) {
+                JSONObject item = new JSONObject();
+                String descricao = rs.getString("descricao");
+                item.put("descricao", descricao );
+                item.put("descricaoF", descricao.replaceAll("\n", "<br>"));
+                lista.put(item);
+            }
+
+            retorno.put("dados", lista);
+            retorno.put("resultado", true);
+            
+            conexao.desconectar();
+
+        } catch (SQLException ex) {
+            Arquivo.gravarLog("Erro lendo treinos pre cadastrados: " + ex.getMessage());
+        }
+
+        Arquivo.gravarLog(retorno.toString());
+
+        return retorno;
+
+    }
+
     public static void main(String[] args) {
         ConsultasSQL consultasSQL = new ConsultasSQL();
-        System.out.println("Resultado:\n" + consultasSQL.planilhaSemanaAtleta(1,4,"2017-10-09").toString());
+        System.out.println("Resultado:\n" + consultasSQL.planilhaSemanaAtleta(1, 4, "2017-10-09").toString());
     }
 
 }
