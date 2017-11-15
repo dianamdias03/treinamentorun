@@ -5,11 +5,7 @@
  */
 package framework;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -18,19 +14,23 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.ImageHtmlEmail;
-import org.apache.commons.mail.resolver.DataSourceUrlResolver;
 
 public class EnviarEmail {
+
+    public static final String email = "m3esporte@zoho.com";
+    public static final String senha = "2Fcontext61325*0*3556907111810_*";
+    public static final String reply = "marceloolimpio2010@hotmail.com";
 
     public static void main(String[] args) {
 
         EnviarEmail enviarEmail = new EnviarEmail();
 
-        enviarEmail.enviar("m3acessoriaesportiva@zoho.com",
-                "Teste de email da M3 Acessoria Esportiva",
-                "Filipe,"
+        enviarEmail.enviarHtml(
+                "adrianomdias@gmail.com",
+                null,
+                "Teste de email da M3 Assessoria Esportiva",
+                "Adriano,"
                 + "\n\nEm breve você receberá os seus treinos por email!");
 
     }
@@ -47,14 +47,14 @@ public class EnviarEmail {
         Session session = Session.getDefaultInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("m3acessoriaesportiva@zoho.com", "2Fcontext61325*0*3556907111810_*");
+                        return new PasswordAuthentication(EnviarEmail.email, EnviarEmail.senha);
                     }
                 });
 
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("m3acessoriaesportiva@zoho.com"));
+            message.setFrom(new InternetAddress(EnviarEmail.email));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
             message.setSubject(titulo);
             message.setText(corpo);
@@ -68,29 +68,38 @@ public class EnviarEmail {
         }
     }
 
-    public void enviarHtml(String enderecoEmail, String titulo, String corpo) {
+    public boolean enviarHtml(String enderecoEmail, String enderecoEmail2, String titulo, String corpo) {
 
-        ImageHtmlEmail email = new ImageHtmlEmail();
-        email.setHostName("smtp.zoho.com");
-        email.setSmtpPort(465);
-        email.setSSLOnConnect(true);
-        email.setAuthentication("m3acessoriaesportiva@zoho.com", "a1b2c3d4");
-        email.setCharset("UTF-8");
+        boolean retorno;
+        ImageHtmlEmail objetoEmail = new ImageHtmlEmail();
+        objetoEmail.setSmtpPort(465);
+        objetoEmail.setSSLOnConnect(true);
+        objetoEmail.setHostName("smtp.zoho.com");
+        objetoEmail.setAuthentication(EnviarEmail.email, EnviarEmail.senha);
+        objetoEmail.setCharset("UTF-8");
 
         try {
-            email.addTo(enderecoEmail);
+            objetoEmail.addTo(enderecoEmail);
+            if (enderecoEmail2 != null) {
+                objetoEmail.addTo(enderecoEmail2);
+            }
 
-            email.setFrom("m3acessoriaesportiva@zoho.com", "M3 Acessoria");
-            email.setSubject(titulo);
-            email.setHtmlMsg(corpo);
+            objetoEmail.setFrom(EnviarEmail.email, "M3 Assessoria Esportiva");
+            objetoEmail.addReplyTo(EnviarEmail.reply, "Treinador Marcelo Olimpio");
+            objetoEmail.addReplyTo("m3esporte@zoho.com", "Treinador Marcelo Olimpio");
+            objetoEmail.setSubject(titulo);
+            objetoEmail.setHtmlMsg(corpo);
 //            email.setTextMsg("Seu cliente de email nao suporta mensagens no formato HTML");
 
-            email.send();
+            objetoEmail.send();
 
+            retorno = true;
         } catch (EmailException ex) {
-            Logger.getLogger(teste.EnviarEmailTeste.class.getName()).log(Level.SEVERE, null, ex);
+            Arquivo.gravarLog("Erro enviando email para " + enderecoEmail + ": " + ex.getMessage());
+//            Logger.getLogger(teste.EnviarEmailTeste.class.getName()).log(Level.SEVERE, null, ex);
+            retorno = false;
         }
-
+        return retorno;
     }
 
 }

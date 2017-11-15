@@ -1,3 +1,4 @@
+<%@page import="framework.FormatacaoDatas"%>
 <%@page import="java.util.Enumeration"%>
 <%@page import="framework.SessaoUsuario"%>
 <%@page import="org.json.JSONObject"%>
@@ -9,10 +10,26 @@
     if (request.getAttribute("dados") == null) {
 
         JSONObject dadosSessao = new JSONObject();
-        Enumeration keys = session.getAttributeNames();
-        while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            dadosSessao.put(key, session.getAttribute(key).toString());
+        
+        FormatacaoDatas formatacaoDatas = new FormatacaoDatas();
+        formatacaoDatas.setCurrentDate();
+        
+//        Enumeration keys = session.getAttributeNames();
+//        while (keys.hasMoreElements()) {
+//            String key = (String) keys.nextElement();
+//            dadosSessao.put(key, session.getAttribute(key).toString());
+//        }
+        if (sessaoUsuario.isLogado()) {
+            dadosSessao.put("recebe_planilha", sessaoUsuario.isRecebePlanilhas());
+            dadosSessao.put("i_usuarios", sessaoUsuario.getCodigoUsuario());
+            dadosSessao.put("i_clientes", sessaoUsuario.getCodigoCliente());
+            dadosSessao.put("cria_planilhas", sessaoUsuario.isCriaPlanilhas());
+            dadosSessao.put("admin", sessaoUsuario.isAdm());
+            dadosSessao.put("nome", sessaoUsuario.getNome());
+            dadosSessao.put("cria_usuarios", sessaoUsuario.isCriaUsuarios());
+            dadosSessao.put("cria_eventos", sessaoUsuario.isCriaEventos());
+            dadosSessao.put("email", sessaoUsuario.getEmail());
+            dadosSessao.put("atualizacao", formatacaoDatas.getDataDMY_HMS());
         }
         dadosSessao.put("logado", sessaoUsuario.isLogado());
         out.print(dadosSessao.toString());

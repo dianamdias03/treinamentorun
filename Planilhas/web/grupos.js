@@ -2,7 +2,7 @@
 
 var treinoApp = angular.module('TreinoApp', ['ngRoute']);
 
-treinoApp.controller('UsuariosCtrl', function ($scope, $rootScope, $location, $http, cadastros)
+treinoApp.controller('GruposCtrl', function ($scope, $rootScope, $location, $http, cadastros)
 {
     $scope.listaRegistros = [];
     $scope.opcoesMenu = [];
@@ -20,9 +20,9 @@ treinoApp.controller('UsuariosCtrl', function ($scope, $rootScope, $location, $h
             }
         });
 
-        $http.post("select.jsp", {params: {"tabela": "usuarios"}}).then(function (response) {
+        $http.post("consulta.jsp", {"consulta": "grupos"}).then(function (response) {
             $scope.dataParam = response.data;
-            $scope.listaRegistros = response.data.registros;
+            $scope.listaRegistros = response.data.dados;
         });
 
     };
@@ -36,7 +36,7 @@ treinoApp.controller('UsuariosCtrl', function ($scope, $rootScope, $location, $h
 
     $scope.gravar = function (item)
     {
-        $http.post("gravar.jsp", {params: {"tabela": "usuarios", "dados": item}}).then(function (response) {
+        $http.post("gravar.jsp", {params: {"tabela": "grupos", "dados": item}}).then(function (response) {
             $scope.retornoGravar = response.data;
             if ($scope.retornoGravar.resultado) {
                 item.ctrl_status = 1;
@@ -53,7 +53,7 @@ treinoApp.controller('UsuariosCtrl', function ($scope, $rootScope, $location, $h
         var lParams = {
             params:
                     {
-                        "tabela": "usuarios",
+                        "tabela": "grupos",
                         "acao": 1
                     }
         };
@@ -61,28 +61,27 @@ treinoApp.controller('UsuariosCtrl', function ($scope, $rootScope, $location, $h
         $http.post("gravar.jsp", lParams).then(function (response) {
             $scope.retornoGravar = response.data;
             if ($scope.retornoGravar.resultado) {
-//                lista.push(response.data.registro);
                 $scope.registro = response.data.registro;
                 $('#myModal').modal('show');
             }
         });
     }
 
-    $scope.excluir = function (mct_dia, mct) {
+    $scope.excluir = function (item) {
 
         var lParams = {
             params: {
-                "tabela": "usuarios",
-                "codigo": mct_dia.codigo,
+                "tabela": "grupos",
+                "codigo": item.codigo,
                 "acao": 2,
-                "dados": mct_dia
+                "dados": item
             }
         };
 
         $http.post("gravar.jsp", lParams).then(function (response) {
             $scope.retornoGravar = response.data;
             if ($scope.retornoGravar.resultado) {
-                cadastros.excluirDaLista(mct_dia, mct.Itens);
+                cadastros.excluirDaLista(item, $scope.listaRegistros);
             }
         });
     }

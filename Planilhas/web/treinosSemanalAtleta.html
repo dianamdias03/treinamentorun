@@ -9,23 +9,25 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
         <script src="treinosSemanalAtleta.js" type="text/javascript"></script>
         <script src="js/cadastros.js" type="text/javascript"></script>
+        <link href="css/treinos.css" rel="stylesheet" type="text/css"/>
     </head>
 
     <body ng-controller="PlanilhaSemanalCtrl">
 
         <div class="row">
-            <div class="col-sm-10">
-                <h2>M3 Assessoria Esportiva</h2>
+            <div class="col-sm-8">
+                <h2>&nbsp;M3 Assessoria Esportiva</h2>
             </div>
-            <div class="col-sm-2">
-                {{usuarioDados.nome}}
-                <br>{{usuarioDados}}
+            <div class="col-sm-3 text-right">
+                <h3><a href="meusdados.html">{{dadosSessao.nome}}</a></h3>
             </div>
+            <div class="col-sm-1 text-right"></div>
         </div>
         <div class="row">
             <div class="col-sm-12">
@@ -55,7 +57,8 @@
                     </div>
                 </div>
             </div>
-
+            <!--{{planilhaSemanal}}-->
+            <!--{{dadosSessao}}-->
             <div class="row" ng-repeat="mct in planilhaSemanal.semana">
                 <div class="form-group col-md-12">
                     <div class="panel panel-default">
@@ -86,7 +89,7 @@
                                                         <tr>
                                                             <td style="width: 40%"></td>
                                                             <td style="text-align: center">
-                                                                <pre style="background: #FAFF8D">-- FOLGA --</pre>
+                                                                <pre style="background: #ffffe6">-- FOLGA --</pre>
                                                             </td>
                                                             <td style="width: 40%"></td>
                                                         </tr>
@@ -122,10 +125,17 @@
                                             <b>Instruções:</b>
                                         </div>
                                         <div class="col-md-11">
-                                            <pre style="background: white; font-size: medium">{{mct_dia.descricao}}</pre>
+                                            <!--<pre style="background: white; font-size: medium">{{mct_dia.descricao}}</pre>-->
+                                            <table border="1" style="width: 100%; padding: 15px; border-color: #eee; border: 1px solid #eee;">
+                                                <tr>
+                                                    <td style="padding: 15px; background-color: #fefefe;">
+                                                        <p ng-bind-html="mct_dia.descricaoF"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" ng-show="!mct_dia.ultimo">
                                         <div class="col-md-12">
                                             <hr align="center" width="100%" size="1" color=red>
                                         </div>

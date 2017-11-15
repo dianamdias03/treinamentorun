@@ -1,6 +1,7 @@
 package treinos;
 
 import framework.Arquivo;
+import framework.Conexao;
 import framework.RequestsAction;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,20 +16,32 @@ public class EnviarTreinoEmail extends RequestsAction {
     @Override
     public JSONObject doAction() {
 
+        boolean sucesso;
         JSONObject retorno = new JSONObject();
 
+//        Arquivo.gravarLog("EnviarTreinoEmail-getParams():" + getParams().toString());
         JSONObject emailConteudo = getHtmlTreino(
                 getParams().getJSONObject("enviarPlanilha").optInt("i_clientes", 0),
                 getParams().getJSONObject("enviarPlanilha").optInt("i_usuarios", 0),
                 getParams().getJSONObject("enviarPlanilha").optString("inicio", "2017-09-18"));
 
         EnviarEmail enviarEmail = new EnviarEmail();
-        enviarEmail.enviarHtml(
+        sucesso = enviarEmail.enviarHtml(
                 emailConteudo.optString("email"),
+                "treinadormarceloolimpio@gmail.com",
                 emailConteudo.optString("titulo"),
                 emailConteudo.optString("conteudo")
         );
-        retorno.put("Email", "Enviado");
+
+        if (sucesso) {
+            int i_micro_ciclo = emailConteudo.optInt("i_micro_ciclo", 0);
+            if (i_micro_ciclo > 0) {
+                gravarEnvioEmail(i_micro_ciclo);
+            }
+            retorno.put("Email", "Enviado");
+        } else {
+            retorno.put("Email", "Erro ao enviar    ");
+        }
 
         return retorno;
     }
@@ -91,6 +104,7 @@ public class EnviarTreinoEmail extends RequestsAction {
         retorno.put("email", dados.optString("email", ""));
         retorno.put("titulo", dados.optString("nomePlanilha", ""));
         retorno.put("conteudo", sb.toString());
+        retorno.put("i_micro_ciclo", dados.optInt("i_micro_ciclo", 0));
 
         return retorno;
     }
@@ -127,6 +141,22 @@ public class EnviarTreinoEmail extends RequestsAction {
         EnviarTreinoEmail enviarTreinoEmail = new EnviarTreinoEmail(null);
         JSONObject conteudo = enviarTreinoEmail.getHtmlTreino(1, 4, "2017-10-09");
         Arquivo.gravarLog(conteudo.toString());
+    }
+
+    public boolean gravarEnvioEmail(int i_micro_ciclo) {
+
+        String sql;
+        boolean resultado = false;
+
+        Conexao conexao = new Conexao();
+        conexao.conectar();
+
+        sql = "update micro_ciclo set data_email=now() where i_micro_ciclo=" + i_micro_ciclo + ";";
+        conexao.executaComando(sql);
+
+        conexao.desconectar();
+
+        return resultado;
     }
 
 }

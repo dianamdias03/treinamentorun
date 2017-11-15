@@ -1,14 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package framework;
 
-/**
- *
- * @author u0180759
- */
 public class Tabela {
 
     public String insertColunas = "";
@@ -17,20 +9,31 @@ public class Tabela {
     public String whereLista = "";
     public String nomeTabela;
 
+    private int codigo;
+
     public String valor_pk;
 
     public Tabela(String tabela) {
         this.nomeTabela = tabela;
+        this.codigo = 0;
     }
 
     public void addColuna(String coluna, String valor, boolean chave) {
-        if (insertColunas.equals("")) {
-            insertColunas = coluna;
-            insertValores = valor;
-        } else {
-            insertColunas += "," + coluna;
-            insertValores += "," + valor;
+
+        boolean autoIncrement;
+
+        autoIncrement = (valor.equals("") || valor.equals("0")) && chave;
+
+        if (!autoIncrement) {
+            if (insertColunas.equals("")) {
+                insertColunas = coluna;
+                insertValores = valor;
+            } else {
+                insertColunas += "," + coluna;
+                insertValores += "," + valor;
+            }
         }
+        
         if (!chave) {
             if (updateLista.equals("")) {
                 updateLista = coluna + "=" + valor;
@@ -78,16 +81,33 @@ public class Tabela {
         }
     }
 
+    public void addColunaExp(String coluna, String valor) {
+        addColuna(coluna, valor);
+    }
+
     public void addColunaI(String coluna, int valor) {
+
+        if (coluna.equals("codigo")) {
+            setCodigo(valor);
+        }
+
         addColuna(coluna, String.valueOf(valor));
     }
 
     public void addColunaI(String coluna, int valor, boolean chave) {
         addColuna(coluna, String.valueOf(valor), chave);
     }
-    
-    public boolean isNewRecord(){
+
+    public boolean isNewRecord() {
         return valor_pk.equals("") || valor_pk.equals("0");
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
     }
 
 }

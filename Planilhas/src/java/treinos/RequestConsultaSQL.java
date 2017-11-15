@@ -22,9 +22,12 @@ public class RequestConsultaSQL extends RequestsAction {
 
         if (getParams().optString("consulta").equals("planilhaSemanal")) {
             retorno = consultaPlanilhaSemanal();
-        }else if (getParams().optString("consulta").equals("treinosPreCadastrados")) {
+//        } else if (getParams().optString("consulta").equals("treinosPreCadastrados")) {
+//            ConsultasSQL consultasSQL = new ConsultasSQL();
+//            retorno = consultasSQL.treinosPreCadastrados();
+        } else if (getParams().optString("consulta").equals("criarEventos")) {
             ConsultasSQL consultasSQL = new ConsultasSQL();
-            retorno = consultasSQL.treinosPreCadastrados();
+            retorno = consultasSQL.criarEventos();
         }
         return retorno;
     }
@@ -37,6 +40,13 @@ public class RequestConsultaSQL extends RequestsAction {
         int i_usuarios = getParams().optInt("i_usuarios");
         int navegacao = getParams().optInt("navegacao");
         String dia = getParams().optString("dia");
+
+        if (dia.equals("")) {
+            FormatacaoDatas formatacaoDatas = new FormatacaoDatas();
+            formatacaoDatas.setCurrentDate();
+            formatacaoDatas.addDia(-formatacaoDatas.getDiaSemanaN() + 2);
+            dia = formatacaoDatas.getDataYMD();
+        }
 
         FormatacaoDatas formatacaoDatas = new FormatacaoDatas(FormatacaoDatas.ymdToDate(dia));
 

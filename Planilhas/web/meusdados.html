@@ -1,0 +1,190 @@
+<!doctype html>
+<html ng-app="TreinoApp">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>M3 Assessoria Esportiva</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <script src="meusdados.js" type="text/javascript"></script>
+        <script src="js/cadastros.js" type="text/javascript"></script>
+        <link href="css/treinos.css" rel="stylesheet" type="text/css"/>
+
+    </head>
+
+    <body ng-controller="MeusDadosCtrl" ng-init="load()">
+
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>&nbsp;M3 Assessoria Esportiva</h2>
+            </div>
+            <div class="col-sm-3 text-right">
+                <h3><a href="meusdados.html">{{dadosSessao.nome}}</a></h3>
+            </div>
+            <div class="col-sm-1 text-right"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs">
+                    <li ng-repeat="item in opcoesMenu"><a href="{{item.link}}">{{item.descricao}}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div ng-view></div>
+
+        <br>
+        <div class="container">
+
+            <div ng-show="modo === 0">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6 text-center"><button type="button" class="btn btn-success btn-lg btn-block" ng-click="setModo(1)">Alterar Senha</button></div>
+                    <div class="col-md-3"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12"><br></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6 text-center"><button type="button" class="btn btn-success btn-lg btn-block" ng-click="setModo(2)">Alterar Dados Cadastrais</button></div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+            <!--{{registro}}-->
+            <!--<br>{{retorno}}-->
+            <div class="row" ng-show="modo === 1">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Alterar senha...</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="inputPassword1" class="col-form-label">Senha atual</label>
+                                    <input id="inputPassword1" type="password" ng-model="registro.senha1" class="form-control" placeholder="Senha atual">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="inputPassword2" class="col-form-label">Nova senha</label>
+                                    <input id="inputPassword2" type="password" ng-model="registro.senha2" class="form-control" placeholder="Informa a nova senha">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="inputPassword3" class="col-form-label">Repetir nova senha</label>
+                                    <input id="inputPassword3" type="password" ng-model="registro.senha3" class="form-control" placeholder="Informação de verificação">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" ng-click="gravar(2)">Salvar</button>
+                            <button type="button" class="btn btn-secondary" ng-click="setModo(0)">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            <div class="row" ng-show="!retorno.retorno">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <div class="alert alert-danger" role="alert">{{retorno.erroMsg}}</div>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+
+            <div class="panel panel-default" ng-show="modo === 2">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <h4>Meus dados</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="inputNome" class="col-form-label">Nome</label>
+                            <input id="inputNome" type="text" ng-model="registro.nome" class="form-control" placeholder="Nome do atleta">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="inputNascto" class="col-form-label">Data de nascimento</label>
+                            <input id="inputNascto" type="text" ng-model="registro.data_nascto" class="form-control" placeholder="Informe a data de nascimento">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputCPF" class="col-form-label">Telefone (Whatsapp)</label>
+                            <input id="inputCPF" type="text" ng-model="registro.telefone_1" class="form-control" placeholder="Informe o número do telefone usado no whatsapp">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputRg" class="col-form-label">Telefone 2</label>
+                            <input id="inputRg" type="text" ng-model="registro.telefone_2" class="form-control" placeholder="Informe o numero de um segundo telefone para contado">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputCPF" class="col-form-label">CPF</label>
+                            <input id="inputCPF" type="text" ng-model="registro.cpf" class="form-control" placeholder="CPF">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputRg" class="col-form-label">RG</label>
+                            <input id="inputRg" type="text" ng-model="registro.rg" class="form-control" placeholder="RG">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail" class="col-form-label">Email</label>
+                            <input  id="inputEmail" type="email" ng-model="registro.email" class="form-control" placeholder="Email">
+                        </div>
+                        <div class="form-group col-md-6">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="inputEndereco" class="col-form-label">Endereço</label>
+                            <input id="inputEndereco" type="text" ng-model="registro.endereco" class="form-control" placeholder="Informe a rua, apartamento, número etc... Ex: Av. Centenário, 7504. Apto 405.">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputCidade" class="col-form-label">Cidade</label>
+                            <input id="inputCidade" type="text" ng-model="registro.cidade" class="form-control" placeholder="Nome da cidade">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputEstado" class="col-form-label">Estado</label>
+                            <input id="inputEstado" type="text" ng-model="registro.estado" class="form-control" placeholder="Sigla do estado">
+                            <!--                        <select id="inputEstado" ng-model="registro.estado"  class="form-control"
+                                                            ng-options="option.nome for option in listaEstadosCidades track by option.sigla">
+                                                    </select>-->
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="inputCEP" class="col-form-label">CEP</label>
+                            <input id="inputCEP" type="text" ng-model="registro.cep" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" ng-click="gravar(1)">Salvar</button>
+                    <button type="button" class="btn btn-secondary" ng-click="setModo(0)">Cancelar</button>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html>

@@ -6,9 +6,12 @@
 package treinos;
 
 import framework.Arquivo;
+import framework.Conexao;
 import framework.GerenciaRequests;
 import framework.RegistroJson;
+import framework.RequestsParams;
 import framework.Tabela;
+import java.io.IOException;
 import org.json.JSONObject;
 
 public class Usuarios extends framework.Gravar {
@@ -16,8 +19,8 @@ public class Usuarios extends framework.Gravar {
     @Override
     public void defineTabela() {
 
-        Arquivo.gravarLog(this.getGerenciaRequests().toString());
-        Arquivo.gravarLog(this.getGerenciaRequests().getNodeParams().toString());
+//        Arquivo.gravarLog(this.getGerenciaRequests().toString());
+//        Arquivo.gravarLog(this.getGerenciaRequests().getNodeParams().toString());
 
         JSONObject jsonDados = this.getGerenciaRequests().getNodeParams().getJSONObject("dados");
 
@@ -28,7 +31,7 @@ public class Usuarios extends framework.Gravar {
         getTabela().addColunaS("nome", jsonDados.optString("nome", ""));
         getTabela().addColunaS("email", jsonDados.optString("email", ""));
         getTabela().addColunaS("senha", jsonDados.optString("senha", ""));
-        getTabela().addColunaI("admin", jsonDados.optInt("admin",0));
+        getTabela().addColunaI("admin", jsonDados.optInt("admin", 0));
         getTabela().addColunaI("cria_planilhas", jsonDados.optInt("cria_planilhas", 0));
         getTabela().addColunaI("cria_usuarios", jsonDados.optInt("cria_usuarios", 0));
         getTabela().addColunaI("cria_eventos", jsonDados.optInt("cria_eventos", 0));
@@ -50,17 +53,17 @@ public class Usuarios extends framework.Gravar {
 //        String params = "{\"params\":{\"tabela\":\"usuarios\",\"acao\":1}}";
         GerenciaRequests gerenciaRequests = new GerenciaRequests();
         String lsRetorno = gerenciaRequests.doRequest(params);
-        Arquivo.gravarLog(lsRetorno);
+//        Arquivo.gravarLog(lsRetorno);
     }
 
     @Override
     public JSONObject newRecord() {
-        
-        int i_clientes=1;
+
+        int i_clientes = 1;
 
         RegistroJson registro = new RegistroJson();
         registro.create();
-        
+
         registro.setItem("ctrl_status", 2);
         registro.setItem("codigo", 0);
         registro.setItem("i_clientes", i_clientes);
@@ -84,6 +87,50 @@ public class Usuarios extends framework.Gravar {
         registro.setItem("telefone_2", "");
 
         return registro.getRegistro();
+    }
+
+    public JSONObject gravarGrupo(RequestsParams requestsParams) {
+
+        boolean sucesso = false;
+        JSONObject retorno = new JSONObject();
+        JSONObject jsonDados = requestsParams.getJsonRequest().getJSONObject("dados");
+
+//        Arquivo.gravarLog("jsonDados:"+jsonDados.toString());
+        
+        int i_grupos_atletas = jsonDados.optInt("i_grupos_atletas", 0);
+
+        Tabela tabela = new Tabela("usuarios");
+        tabela.addColunaI("i_usuarios", jsonDados.optInt("i_usuarios", 0), true);
+        tabela.addColunaI("i_grupos_atletas", i_grupos_atletas);
+
+        Conexao conexao = new Conexao();
+        conexao.conectar();
+        sucesso = conexao.executaComando(tabela.getUpdate());
+        conexao.desconectar();
+
+        if (!sucesso) {
+            retorno.put("erroMsg", "Erro gravando grupo do usuário!!!");
+        }
+
+        retorno.put("retorno", sucesso);
+
+        return retorno;
+    }
+
+    @Override
+    public boolean triggerAposGravar(long codigo) {
+        MicroCicloSetup microCicloSetup = new MicroCicloSetup();
+        try {
+            microCicloSetup.gerarPeriodos(null, 0);
+        } catch (IOException ex) {
+            Arquivo.gravarLog("triggerAposGravar: Erro " + ex.getMessage());
+        }
+        return true;
+    }
+
+    @Override
+    public void triggerEndRequest(JSONObject jsonRetorno) {
+        return;
     }
 
 }

@@ -7,9 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
-import treinos.GravarMicroCicloTreinos;
-import treinos.RequestConsultaSQL;
-import treinos.Usuarios;
 
 public class GerenciaRequests {
     
@@ -17,9 +14,9 @@ public class GerenciaRequests {
     
     public String requestParams(HttpServletRequest request) {
         String params;
-        Arquivo.gravarLog("setParams: " + "Inicio");
+//        Arquivo.gravarLog("setParams: " + "Inicio");
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "UTF-8"));
             params = br.readLine();
         } catch (IOException ex) {
             Arquivo.gravarLog("setParams: ex: " + "Erro");
@@ -27,13 +24,13 @@ public class GerenciaRequests {
             params = "{\"erro\":\"Erro lendo parametros\"}";
         }
         
-        Arquivo.gravarLog("setParams: " + "Fim");
+//        Arquivo.gravarLog("setParams: " + "Fim");
         
         return params;
     }
     
     public void setParams(String params) {
-        Arquivo.gravarLog("setParams: str=" + params);
+//        Arquivo.gravarLog("setParams: str=" + params);
         try {
             jsonRequestParam = new JSONObject(params);
         } catch (Exception e) {
@@ -41,7 +38,7 @@ public class GerenciaRequests {
             Arquivo.gravarLog("**Erro**" + e.toString());
         }
         
-        Arquivo.gravarLog("setParams: ok=" + jsonRequestParam.toString());
+//        Arquivo.gravarLog("setParams: ok=" + jsonRequestParam.toString());
     }
     
     public boolean isCreateNewRecord() {
@@ -69,11 +66,19 @@ public class GerenciaRequests {
         String tabela = getNodeParams().optString("tabela", "");
         
         if (tabela.equals("usuarios")) {
-            gravar = new Usuarios();
+            gravar = new treinos.Usuarios();
+        }
+        
+        if (tabela.equals("criarEventos")) {
+            gravar = new treinos.Eventos();
         }
         
         if (tabela.equals("micro_ciclo_treinos")) {
-            gravar = new GravarMicroCicloTreinos();
+            gravar = new treinos.GravarMicroCicloTreinos();
+        }
+        
+        if (tabela.equals("grupos")) {
+            gravar = new treinos.Grupos();
         }
         
         if (gravar == null) {
@@ -93,7 +98,7 @@ public class GerenciaRequests {
         boolean acaoRealizada = false;
         long lastID = 0;
         JSONObject jsonRetorno = new JSONObject();
-        Gravar gravar;
+        Gravar gravar=null;
         
         Arquivo.gravarLog("doRequest: " + request);
         this.setParams(request);
@@ -108,7 +113,7 @@ public class GerenciaRequests {
             } else if (params.has("acao-gravar")) {
                 
                 if (params.optString("acao-gravar").equals("consultaSQL")) {
-                    RequestConsultaSQL requestConsultaSQL = new RequestConsultaSQL(params);
+                    treinos.RequestConsultaSQL requestConsultaSQL = new treinos.RequestConsultaSQL(params);
                     jsonRetorno = requestConsultaSQL.doAction();
                     acaoRealizada = true;
                     retorno = true;
@@ -140,7 +145,11 @@ public class GerenciaRequests {
         jsonRetorno.put("params", lastID);
         jsonRetorno.put("novoCodigo", lastID);
         
-        Arquivo.gravarLog("doRequest-retorno: " + jsonRetorno.toString());
+        if(gravar!=null){
+            gravar.triggerEndRequest(jsonRetorno);
+        }
+        
+//        Arquivo.gravarLog("doRequest-retorno: " + jsonRetorno.toString());
         
         return jsonRetorno.toString();
     }

@@ -1,6 +1,5 @@
 <%@page import="org.json.JSONObject"%>
 <%@page import="treinos.EnviarTreinoEmail"%>
-<!DOCTYPE html>
 <%
     
     EnviarTreinoEmail enviarTreinoEmail = new EnviarTreinoEmail(null);

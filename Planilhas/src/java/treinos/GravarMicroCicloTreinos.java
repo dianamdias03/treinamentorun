@@ -9,6 +9,7 @@ import framework.Arquivo;
 import framework.Conexao;
 import framework.FormatacaoDatas;
 import framework.RegistroJson;
+import framework.RequestsParams;
 import framework.RsJson;
 import framework.Tabela;
 import java.io.IOException;
@@ -16,16 +17,10 @@ import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/**
- *
- * @author u0180759
- */
 public class GravarMicroCicloTreinos extends framework.Gravar {
 
     @Override
     public void defineTabela() {
-
-        Arquivo.gravarLog(this.getGerenciaRequests().getNodeParams().toString());
 
         JSONObject jsonDados = this.getGerenciaRequests().getNodeParams().getJSONObject("dados");
 
@@ -51,12 +46,12 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
         getTabela().addColunaI("fc_media", jsonDados.optInt("fc_media", 0));
         getTabela().addColunaI("distancia", jsonDados.optInt("distancia", 0));
         getTabela().addColuna("i_micro_ciclo_treinos_planejado", "0");
+        getTabela().addColunaI("i_treinosPreCadastrados", jsonDados.optInt("i_treinosPreCadastrados", 0));
     }
 
     public RegistroJson newTreino() {
 
-        Arquivo.gravarLog("->" + this.getGerenciaRequests().getNodeParams().toString());
-
+//        Arquivo.gravarLog("->" + this.getGerenciaRequests().getNodeParams().toString());
         RegistroJson registro = new RegistroJson();
         registro.create();
         registro.setItem("ctrl_status", 2);
@@ -73,32 +68,87 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
         registro.setItem("i_clientes", this.getGerenciaRequests().getNodeParams().optInt("i_clientes", 0));
         registro.setItem("i_usuarios", this.getGerenciaRequests().getNodeParams().optInt("i_usuarios", 0));
         registro.setItem("i_micro_ciclo", this.getGerenciaRequests().getNodeParams().optInt("i_micro_ciclo", 0));
+        registro.setItem("i_treinosPreCadastrados", 0);
 
         return registro;
     }
 
+    public int getRandomico(int Max, int Min) {
+        return Min + (int) (Math.random() * ((Max - Min) + 1));
+    }
+
+    public JSONObject newTreinoFixo(RequestsParams requestsParams) {
+
+        RegistroJson registro = new RegistroJson();
+        registro.create();
+        registro.setItem("ctrl_status", 1);
+        registro.setItem("codigo", 0);
+        registro.setItem("tipo", 1);
+        registro.setItem("dia", requestsParams.getJsonRequest().optString("dia", ""));
+        registro.setItem("tipos_modalidades", 1, "Não informado");
+        registro.setItem("tipos_intensidades", 1, "Não informado");
+        registro.setItem("tipos_treinos", 1, "Não informado");
+        registro.setItem("tipos_distancias", 1, "km");
+        registro.setItem("tipos_percursos", 1, "Não informado");
+        registro.setItem("descricao", "");
+        registro.setItem("feedback", "");
+        registro.setItem("i_clientes", requestsParams.getJsonRequest().optInt("i_clientes", 0));
+        registro.setItem("i_usuarios", requestsParams.getJsonRequest().optInt("i_usuarios", 0));
+        registro.setItem("i_micro_ciclo", requestsParams.getJsonRequest().optInt("i_micro_ciclo", 0));
+        registro.setItem("i_treinosPreCadastrados", 0);
+
+        int tipo = requestsParams.getJsonRequest().optInt("tipo", 0);
+
+        if (tipo == 1) {
+            registro.setItem("tipos_modalidades", 4, "Não informado");
+        }
+        if (tipo == 2) {
+            registro.setItem("tipos_modalidades", 1, "Não informado");
+            String descricao = "Treino coletivo as 19:30 no Parque das Nações";
+            registro.setItem("descricao", descricao);
+            registro.setItem("descricaoF", descricao);
+        }
+        if (tipo == 3) {
+            registro.setItem("tipos_modalidades", 1, "Corrida");
+            ConsultasSQL consultasSQL = new ConsultasSQL();
+
+            JSONObject dados = consultasSQL.treinosPreCadastrados(requestsParams);
+            JSONArray dadosRegistro = dados.getJSONArray("dados");
+
+            int pos = getRandomico(0, dadosRegistro.length() - 1);
+
+            for (int i = 0; i < dadosRegistro.length(); i++) {
+                if (i == pos) {
+                    String descricao = dadosRegistro.getJSONObject(i).optString("descricao");
+                    registro.setItem("descricao", descricao);
+                    registro.setItem("descricaoF", descricao);
+                }
+            }
+
+        }
+
+        return registro.getRegistro();
+    }
+
     @Override
     public JSONObject newRecord() {
-        Arquivo.gravarLog("->" + this.getGerenciaRequests().getNodeParams().toString());
+//        Arquivo.gravarLog("->" + this.getGerenciaRequests().getNodeParams().toString());
         RegistroJson registro = newTreino();
         return registro.getRegistro();
     }
 
-    public JSONObject newDiaDeFolga() {
-        Arquivo.gravarLog("Dia de folga->" + this.getGerenciaRequests().getNodeParams().toString());
-        RegistroJson registro = newTreino();
-        registro.setItem("tipos_modalidades", 1, "Não informado");
-        registro.setItem("ctrl_status", 1);
-        Arquivo.gravarLog("Dia de folga Registro:" + registro.toString());
-        return registro.getRegistro();
-    }
-
+//    public JSONObject newDiaDeFolga() {
+//        RegistroJson registro = newTreino();
+//        registro.setItem("tipos_modalidades", 1, "Não informado");
+//        registro.setItem("ctrl_status", 1);
+//        return registro.getRegistro();
+//    }
     public JSONArray get(int i_clientes, int i_usuarios, int i_micro_ciclo, String asDia) {
         String sql;
         sql = "select i_micro_ciclo_treinos as codigo, i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, "
                 + "i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, "
                 + "tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, "
-                + "i_micro_ciclo_treinos_planejado, feedback,"
+                + "i_micro_ciclo_treinos_planejado, feedback, i_treinosPreCadastrados, "
                 + "(select s.descricao from tipos_modalidades s where s.i_clientes=p.i_clientes and s.i_tipos_modalidades=p.i_tipos_modalidades) as s_tipos_modalidades, "
                 + "(select s.descricao from tipos_treinos s where s.i_clientes=p.i_clientes and s.i_tipos_treinos=p.i_tipos_treinos) as s_tipos_treinos, "
                 + "(select s.descricao from tipos_intensidades s where s.i_clientes=p.i_clientes and s.i_tipos_intensidades=p.i_tipos_intensidades) as s_tipos_intensidades, "
@@ -163,8 +213,11 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
 
             Date diaJsonItem = FormatacaoDatas.ymdToDate(jsonItem.get("dia").toString());
             formatacaoDatas = new FormatacaoDatas(diaJsonItem);
-            Arquivo.gravarLog(jsonItem.get("dia").toString() + " " + formatacaoDatas.getDia().toString() + " " + formatacaoDatas.getDataDMY() + " " + diaJsonItem.toString());
+//            Arquivo.gravarLog(jsonItem.get("dia").toString() + " " + formatacaoDatas.getDia().toString() + " " + formatacaoDatas.getDataDMY() + " " + diaJsonItem.toString());
             jsonItem.put("dia", formatacaoDatas.getDataDMY());
+
+            String descricao = jsonItem.get("descricao").toString();
+            jsonItem.put("descricaoF", descricao.replaceAll("\n", "<br>"));
 
             if (!dia.equals(formatacaoDatas.getDia())) {
                 jsonLinha = new JSONArray();
@@ -188,19 +241,25 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
             jsonNew.put("diaF", formatacaoDatas.diaMes());
             jsonNew.put("diaS", formatacaoDatas.diaSemana());
 
+            JSONObject jsonUltimoItem = null;
             for (int j = 0; dados != null && j < dados.length(); j++) {
                 jsonItem = dados.getJSONObject(j);
                 Date diaJsonItem = FormatacaoDatas.dmyToDate(jsonItem.get("dia").toString());
                 if (diaJsonItem.equals(formatacaoDatas.getDia())) {
                     jsonLinha.put(jsonItem);
+                    jsonUltimoItem = jsonItem;
+                    jsonItem.put("ultimo", false);
                 }
+            }
+            if (jsonUltimoItem != null) {
+                jsonUltimoItem.put("ultimo", true);
             }
 
             jsonNew.put("Itens", jsonLinha);
             dados2.put(jsonNew);
             formatacaoDatas.addDia(1);
         }
-        
+
         dados = dados2;
 
         return dados;
@@ -209,14 +268,31 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
 
     public static void main(String[] args) {
         /*
-        GravarMicroCicloTreinos gravar = new GravarMicroCicloTreinos();
-//        String params = "{\"params\":{\"dados\":{\"i_micro_ciclo_treinos\":4,\"tipo\":4,\"i_tipos_modalidades\":1,\"s_tipos_intensidades\":\"Não informado\",\"i_tipos_treinos\":1,\"s_tipos_treinos\":\"Não informado\",\"tempo_treino_minimo\":0,\"i_tipos_intensidades\":1,\"i_micro_ciclo\":1,\"i_usuarios\":4,\"tempo_treino_realizado\":0,\"ordem\":1,\"s_tipos_distancias\":\"km\",\"s_tipos_modalidades\":\"Corrida\",\"i_clientes\":1,\"s_tipos_percursos\":\"Não informado\",\"tipos_modalidades\":{\"i_tipos_modalidades\":1,\"descricao\":\"Corrida\"},\"ctrl_status\":2,\"tempo_treino_maximo\":0,\"i_micro_ciclo_treinos_planejado\":0,\"tipos_intensidades\":{\"i_tipos_intensidades\":1,\"descricao\":\"Não informado\"},\"tipos_percursos\":{\"i_tipos_percursos\":1,\"descricao\":\"Não informado\"},\"fc_media\":150,\"descricao\":\"testetetete\",\"tipos_distancias\":{\"i_tipos_distancias\":1,\"descricao\":\"km\"},\"i_tipos_percursos\":1,\"distancia\":15,\"i_tipos_distancias\":1,\"tipos_treinos\":{\"i_tipos_treinos\":1,\"descricao\":\"Não informado\"},\"dia\":\"21/09/2017\"}}}";
-        String params = "{\"params\":{\"acao\":1}}";
-        gravar.testGravar(params);
-*/
+         GravarMicroCicloTreinos gravar = new GravarMicroCicloTreinos();
+         //        String params = "{\"params\":{\"dados\":{\"i_micro_ciclo_treinos\":4,\"tipo\":4,\"i_tipos_modalidades\":1,\"s_tipos_intensidades\":\"Não informado\",\"i_tipos_treinos\":1,\"s_tipos_treinos\":\"Não informado\",\"tempo_treino_minimo\":0,\"i_tipos_intensidades\":1,\"i_micro_ciclo\":1,\"i_usuarios\":4,\"tempo_treino_realizado\":0,\"ordem\":1,\"s_tipos_distancias\":\"km\",\"s_tipos_modalidades\":\"Corrida\",\"i_clientes\":1,\"s_tipos_percursos\":\"Não informado\",\"tipos_modalidades\":{\"i_tipos_modalidades\":1,\"descricao\":\"Corrida\"},\"ctrl_status\":2,\"tempo_treino_maximo\":0,\"i_micro_ciclo_treinos_planejado\":0,\"tipos_intensidades\":{\"i_tipos_intensidades\":1,\"descricao\":\"Não informado\"},\"tipos_percursos\":{\"i_tipos_percursos\":1,\"descricao\":\"Não informado\"},\"fc_media\":150,\"descricao\":\"testetetete\",\"tipos_distancias\":{\"i_tipos_distancias\":1,\"descricao\":\"km\"},\"i_tipos_percursos\":1,\"distancia\":15,\"i_tipos_distancias\":1,\"tipos_treinos\":{\"i_tipos_treinos\":1,\"descricao\":\"Não informado\"},\"dia\":\"21/09/2017\"}}}";
+         String params = "{\"params\":{\"acao\":1}}";
+         gravar.testGravar(params);
+         */
         GravarMicroCicloTreinos gravarMicroCicloTreinos = new GravarMicroCicloTreinos();
         JSONArray lista = gravarMicroCicloTreinos.get(1, 4, 1, "2017-09-18");
         Arquivo.gravarLog("lista: " + lista.toString());
+    }
+
+    @Override
+    public boolean triggerAposGravar(long codigo) {
+        return true;
+    }
+
+    @Override
+    public void triggerEndRequest(JSONObject jsonRetorno) {
+        try {
+            JSONObject jsonDados = this.getGerenciaRequests().getNodeParams().getJSONObject("dados");
+            String descricao = jsonDados.optString("descricao", "");
+            descricao = descricao.replaceAll("\n", "<br>");
+            jsonRetorno.put("descricaoF", descricao);
+        } catch (Exception e) {
+            //-- Proteção quando o json não estiver na estrutura correta.
+        }
     }
 
 }

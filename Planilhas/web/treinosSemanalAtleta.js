@@ -1,13 +1,13 @@
 
-var treinoApp = angular.module('TreinoApp', ['ngRoute']);
+var treinoApp = angular.module('TreinoApp', ['ngRoute', 'ngSanitize']);
 
-treinoApp.controller('PlanilhaSemanalCtrl', function ($scope, $rootScope, $location, $http, cadastros)
+treinoApp.controller('PlanilhaSemanalCtrl', function ($scope, $rootScope, $location, $http, cadastros, $sanitize)
 {
     $scope.planilhaSemanal = [];
-    $scope.opcoesMenu = cadastros.getMenus();
+    $scope.opcoesMenu = [];
     $scope.nomeCliente = cadastros.getNomeCliente();
     cadastros.setScope($scope);
-    $scope.dia = "2017-10-09";
+    $scope.dia = "";
 
     $scope.loadPlanilhaSemana = function (navegacao)
     {
@@ -17,8 +17,8 @@ treinoApp.controller('PlanilhaSemanalCtrl', function ($scope, $rootScope, $locat
                     params: {
                         "acao-gravar": "consultaSQL",
                         "consulta": "planilhaSemanal",
-                        "i_clientes": $scope.sessaoUsuario.i_clientes,
-                        "i_usuarios": $scope.sessaoUsuario.i_usuarios,
+                        "i_clientes": $scope.dadosSessao.i_clientes,
+                        "i_usuarios": $scope.dadosSessao.i_usuarios,
                         "navegacao": navegacao,
                         "dia": $scope.dia
                     }
@@ -34,11 +34,17 @@ treinoApp.controller('PlanilhaSemanalCtrl', function ($scope, $rootScope, $locat
 
     $scope.loadSessao = function ()
     {
-        $http.post("sessao.jsp", {params: {}})
-                .then(function (response) {
-                    $scope.sessaoUsuario = response.data;
-                    $scope.loadPlanilhaSemana(0);
-                });
+
+        $http.post("sessao.jsp", {}).then(function (response) {
+            $scope.dadosSessao = response.data;
+            if (!$scope.dadosSessao.logado) {
+                document.location.href = './login.html';
+            } else {
+                $scope.opcoesMenu = cadastros.getMenus($scope.dadosSessao);
+                $scope.loadPlanilhaSemana(0);
+            }
+        });
+
     };
 
     $scope.loadSessao();

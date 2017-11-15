@@ -20,23 +20,35 @@ public abstract class Gravar {
 
         String sql;
         boolean resultado;
+        int tipoComando;
+        long codigo;
 
         if (tabela.isNewRecord()) {
             sql = this.getTabela().getInsert();
+            tipoComando=1;
         } else {
             if (getGerenciaRequests().isDeleteRecord()) {
                 sql = this.getTabela().getDelete();
+                tipoComando=3;
             } else {
                 sql = this.getTabela().getUpdate();
+                tipoComando=2;
             }
         }
 
-        Arquivo.gravarLog(sql);
+//        Arquivo.gravarLog(sql);
 
         Conexao conexao = new Conexao();
         conexao.conectar();
         resultado = conexao.executaComando(sql);
         this.lastID = conexao.lastID;
+        
+        codigo=getTabela().getCodigo();
+        if(codigo==0){
+            codigo=this.lastID;
+        }
+        
+        this.triggerAposGravar(codigo);
         
         conexao.desconectar();
 
@@ -72,6 +84,7 @@ public abstract class Gravar {
     public abstract void defineTabela();
 
     public abstract JSONObject newRecord();
+    public abstract boolean triggerAposGravar(long codigo);
 
     public GerenciaRequests getGerenciaRequests() {
         return gerenciaRequests;
@@ -80,5 +93,7 @@ public abstract class Gravar {
     public void setGerenciaRequests(GerenciaRequests gerenciaRequests) {
         this.gerenciaRequests = gerenciaRequests;
     }
+
+    public abstract void triggerEndRequest(JSONObject jsonRetorno);
 
 }

@@ -135,20 +135,36 @@ treinoApp.service('cadastros', function () {
 //         $('#myModal3').modal('hide');
     }
 
-    this.getMenus = function () {
+    this.getMenus = function (dadosSessao) {
         var opcoesMenu = [];
         opcoesMenu.push({"link": './', "descricao": 'Home'});
-//        opcoesMenu.push({"link": './', "descricao": 'Clientes'});
-        opcoesMenu.push({"link": './usuarios.html', "descricao": 'Atletas'});
-        opcoesMenu.push({"link": './treinador.html', "descricao": 'Treinos'});
-        opcoesMenu.push({"link": './treinosSemanalAtleta.html', "descricao": 'Meus Treinos'});
-//        opcoesMenu.push({"link": './treinador.html', "descricao": 'Meus treinos'});
+        if (dadosSessao.admin) {
+            opcoesMenu.push({"link": './', "descricao": 'Clientes'});
+        }
+        if (dadosSessao.cria_usuarios) {
+            opcoesMenu.push({"link": './usuarios.html', "descricao": 'Atletas'});
+        }
+        opcoesMenu.push({"link": './criarEventos.html', "descricao": 'Eventos'});
+        if (dadosSessao.cria_planilhas) {
+            opcoesMenu.push({"link": './grupos.html', "descricao": 'Grupos'});
+            opcoesMenu.push({"link": './treinador.html', "descricao": 'Treinos'});
+        }
+//        opcoesMenu.push({"link": './eventos.html', "descricao": 'Eventos'});
+        if (dadosSessao.recebe_planilha) {
+            opcoesMenu.push({"link": './treinosSemanalAtleta.html', "descricao": 'Meus Treinos'});
+        }
         opcoesMenu.push({"link": './login.jsp?acao=1', "descricao": 'Sair'});
         return opcoesMenu;
     }
-    
-    this.getNomeCliente = function(){
+
+    this.getNomeCliente = function () {
         return 'M3 Assessoria Esportiva';
+    }
+
+    this.getRandomIntInclusive = function(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     this.getEstadosCidades = function () {

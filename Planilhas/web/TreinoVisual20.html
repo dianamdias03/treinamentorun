@@ -1,0 +1,117 @@
+<!doctype html>
+<html ng-app="TreinoApp">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>M3</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <script src="TreinoVisual20.js" type="text/javascript"></script>
+        <script src="js/cadastros.js" type="text/javascript"></script>
+        <style>
+            /*            .row {
+                            padding-top: .75rem;
+                            padding-bottom: .75rem;
+                            background-color: rgba(86,61,124,.15);
+                            border: 1px solid rgba(86,61,124,.2);
+                        }*/
+        </style>
+    </head>
+
+    <body ng-controller="TreinoVisual20Ctrl" ng-init="load()">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>M3 Assessoria Esportiva</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs">
+                    <li ng-repeat="item in opcoesMenu"><a href="{{item.link}}">{{item.descricao}}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div ng-view></div>
+
+        <div class="container">
+            <br>
+            <br>
+            {{conteudo}}            
+            <br>
+            <br>
+
+            <div class = "panel panel-default" ng-repeat="dia in semana">
+                <div class = "panel-body">
+                    <div class="row" style="">
+                        <div class="col-md-12">
+                            {{dia.nome}}
+                            <div class="row" ng-repeat="treino in dia.treinos">
+                                <div class="row" style="">
+                                    <div class="col-md-2">
+                                        <div class="alert alert-success" role="alert" style="height: 100%">
+                                            <b>{{treino.vezes}}</b>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <div class="alert alert-success" role="alert" style="width: 100%" ng-repeat="etapa in treino.etapas">
+                                            <b>{{etapa.descricao}}</b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-success" role="alert">
+                <b>Segunda-feira<br>23/out</b>
+            </div>
+
+            <div style="font-family: Verdana, sans-serif;
+                 font-size: 15px;
+                 font-style: normal;
+                 font-variant: normal;
+                 font-weight: 400;
+                 line-height: 17px;">
+
+                <table style="border-radius: 7px;
+                       border-spacing: 10px 10px;
+                       background: #f2f2f2;
+                       border: 2px solid #e6e6e6;
+                       border-collapse: collapse;">
+                    <tr>
+                        <td rowspan="2" style="border-radius: 7px; 
+                            border: 2px solid #00cc44;
+                            padding: 10px;
+                            background: #00e64d">
+
+                        </td>
+                        <td style="border-radius: 7px; 
+                            border: 2px solid #00cc44;
+                            padding: 10px;
+                            background: #00e64d">
+                            teste
+                        </td>
+                    </tr>
+                    <tr style="padding: 10px;">
+                        <td style="border-radius: 7px; 
+                            background: #1aa3ff;
+                            border: 2px solid #008ae6;
+                            padding: 10px;">
+                            teste
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

@@ -9,6 +9,7 @@ import java.util.Date;
 public class FormatacaoDatas {
 
     private Calendar calendar;
+    private boolean valorNulo ;
 
     public String siglaSemana() {
         String retorno;
@@ -136,13 +137,26 @@ public class FormatacaoDatas {
         calendar.setTime(dia);
     }
 
+    public void setDia(String dia) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            calendar.setTime(sdf.parse(dia));
+        } catch (ParseException ex) {
+            Arquivo.gravarLog("Erro em conversao de data: " + dia);
+            Arquivo.gravarLog("Erro: " + ex.getMessage());
+        }
+    }
+
     public FormatacaoDatas() {
         calendar = Calendar.getInstance();
     }
-    
+
     public FormatacaoDatas(Date dia) {
         calendar = Calendar.getInstance();
-        calendar.setTime(dia);
+        valorNulo = (dia == null);
+        if (!valorNulo) {
+            calendar.setTime(dia);
+        };
     }
 
     public void addDia(int dias) {
@@ -163,7 +177,7 @@ public class FormatacaoDatas {
 
         return dataConvertida;
     }
-    
+
     public static Date dmyToDate(String strData) {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -178,17 +192,52 @@ public class FormatacaoDatas {
 
         return dataConvertida;
     }
-    
-    public String getDataYMD(){
+
+    public String getDataYMD() {
+        if(valorNulo) return null;
         DateFormat dateFormat;
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(getDia());
     }
 
-    public String getDataDMY(){
+    public String getDataDMY() {
+        if(valorNulo) return null;
         DateFormat dateFormat;
         dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         return dateFormat.format(getDia());
+    }
+
+    public String getDataDMY_HMS() {
+        if(valorNulo) return null;
+        DateFormat dateFormat;
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return dateFormat.format(getDia());
+    }
+
+    public void setCurrentDate() {
+        setDia(new Date());
+    }
+
+    public int getDiaSemanaN() {
+        return calendar.get(Calendar.DAY_OF_WEEK);
+    }
+
+    public static void main(String[] args) {
+        FormatacaoDatas formatacaoDatas = new FormatacaoDatas();
+        formatacaoDatas.setCurrentDate();
+        formatacaoDatas.addDia(-formatacaoDatas.getDiaSemanaN() + 2);
+
+        System.out.println("Dia: " + formatacaoDatas.getDataYMD() + " " + formatacaoDatas.getDiaSemanaN());
+
+        formatacaoDatas = new FormatacaoDatas();
+        formatacaoDatas.setDia("1978-01-07 10:30:15");
+        System.out.println("Data e hora: " + formatacaoDatas.getDataDMY_HMS());
+
+        formatacaoDatas = new FormatacaoDatas();
+        formatacaoDatas.setDia("1978-01-07");
+        System.out.println("Data: " + formatacaoDatas.getDataDMY());
+        System.out.println("Data: " + formatacaoDatas.getDataDMY_HMS());
+
     }
 
 }

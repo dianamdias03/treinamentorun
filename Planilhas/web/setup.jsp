@@ -16,7 +16,7 @@
         <h1>Gerando Micro Ciclos</h1>
         <%
             MicroCicloSetup microCicloSetup = new MicroCicloSetup();
-            microCicloSetup.gerarPeriodos(out);
+            microCicloSetup.gerarPeriodos(out,0);
         %>
 
     </body>

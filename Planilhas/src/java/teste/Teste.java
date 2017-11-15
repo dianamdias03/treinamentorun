@@ -6,6 +6,8 @@
 package teste;
 
 import framework.Arquivo;
+import framework.Conexao;
+import framework.Tabela;
 import org.json.JSONObject;
 import treinos.EnviarTreinoEmail;
 
@@ -16,16 +18,26 @@ import treinos.EnviarTreinoEmail;
 public class Teste {
 
     public static void main(String[] args) {
-        String texto = "Terça-feira";
-        
-        EnviarTreinoEmail enviarTreinoEmail = new EnviarTreinoEmail(new JSONObject());
 
-//        texto = texto.replaceAll("ç", "x");
-
-        texto = enviarTreinoEmail.text(texto);
+        Conexao conexao = new Conexao();
         
-        Arquivo.gravarLog(texto);
-        System.out.println("texto: " + texto);
+        conexao.conectar();
+        
+        conexao.executaComando("UPDATE eventosparticipacoes SET nome='Pedrão' WHERE i_eventosParticipacoes=5;");
+        conexao.executaComando("UPDATE eventosparticipacoes SET nome='ãÃ-çÇ-éÉ-óÓ' WHERE i_eventosParticipacoes=7;");
+        
+        Tabela tabela = new Tabela("eventosparticipacoes");
+        
+        tabela.addColunaI("i_eventosParticipacoes", 6, true);
+        tabela.addColunaI("i_eventos", 1);
+        tabela.addColunaI("i_usuarios", 0);
+        tabela.addColunaI("i_usuarios_convidador", 1);
+        tabela.addColunaI("confirmado", 1);
+        tabela.addColunaS("nome", "Maçã");
+        tabela.addColunaS("controle", "");
+        
+        conexao.executaComando(tabela.getUpdate());
+        
     }
 
 }

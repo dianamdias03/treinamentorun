@@ -6,13 +6,26 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
     $scope.listaRegistros = [];
     $scope.microCicloAtleta = [];
     $scope.treinosPreCadastrados = [];
-    $scope.opcoesMenu = cadastros.getMenus();
+    $scope.opcoesMenu = [];
     $scope.nomeCliente = cadastros.getNomeCliente();
+    $scope.hasPlanilhaCopiada = false;
     cadastros.setScope($scope);
+    $scope.estadosPlanilha = [
+        {"codigo": 0, "descricao": "A fazer"},
+        {"codigo": 1, "descricao": "A confirmar"},
+        {"codigo": 2, "descricao": "Concluída"}
+    ];
 
     $scope.selecionarAtleta = function (item) {
         $scope.atletaSelecionado = true;
+        $scope.retornoEnvioEmail = {};
+        $scope.msgEnvioEmail = "";
         $scope.atleta = item;
+        $scope.atleta.grupo = {
+            "codigo": $scope.atleta.i_grupos_atletas,
+            "i_clientes": $scope.atleta.i_clientes,
+            "nome": $scope.atleta.nomeGrupo
+        }
         $scope.loadMicroCicloAtleta(0);
     };
 
@@ -33,9 +46,10 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
         return lista;
     };
 
+
     $scope.loadMicroCicloAtleta = function (navegacao)
     {
-        var diaInicio = "2017-09-18";
+        var diaInicio = "";
         var codigo_atleta;
 
         if ($scope.atletaSelecionado) {
@@ -121,15 +135,21 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
         });
     }
 
-    $scope.load = function ()
+    $scope.atualizaSessao = function ()
     {
         $http.post("sessao.jsp", {}).then(function (response) {
             $scope.dadosSessao = response.data;
-            if(!$scope.dadosSessao.logado){
+            if (!$scope.dadosSessao.logado) {
                 document.location.href = './login.html';
-            };
+            } else {
+                $scope.opcoesMenu = cadastros.getMenus($scope.dadosSessao);
+            }
         });
+    }
 
+    $scope.load = function ()
+    {
+        $scope.atualizaSessao();
         $scope.loadMicroCicloAtleta(0);
 
         $http.post("select.jsp", {params: {"tabela": "tipos_modalidades"}}).then(function (response) {
@@ -147,6 +167,9 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
         $http.post("select.jsp", {params: {"tabela": "tipos_distancias"}}).then(function (response) {
             $scope.tiposDistancias = response.data.registros;
         });
+        $http.post("consulta.jsp", {"consulta": "grupos"}).then(function (response) {
+            $scope.listaGrupos = response.data.dados;
+        });
     };
 
     $scope.gravar = function (item)
@@ -155,7 +178,10 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
             $scope.retornoGravar = response.data;
             if ($scope.retornoGravar.resultado) {
                 item.ctrl_status = 1;
-                item.codigo = response.data.novoCodigo;
+                if (item.codigo === 0) {
+                    item.codigo = response.data.novoCodigo;
+                }
+                item.descricaoF = response.data.descricaoF;
             }
         });
     };
@@ -192,58 +218,86 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
                     }
         };
 
+        $scope.msgEnvioEmail = "Enviando e-mail...";
         $http.post("gravar.jsp", lParams).then(function (response) {
-            $scope.retornoGravar = response.data;
-        });
-    }
-
-    $scope.TreinoFixos = function (mc, mct, tipo) {
-        var lParams = {
-            params:
-                    {
-                        "tabela": "micro_ciclo_treinos",
-                        "acao": 1,
-                        "dia": mct.dia,
-                        "i_clientes": mc.i_clientes,
-                        "i_usuarios": mc.i_usuarios,
-                        "i_micro_ciclo": mc.i_micro_ciclo
-
-                    }
-        };
-
-        $http.post("gravar.jsp", lParams).then(function (response) {
-            $scope.retornoGravar = response.data;
-            if ($scope.retornoGravar.resultado) {
-                response.data.registro.ctrl_status = 1;
-                if (tipo === 1) {
-                    response.data.registro.tipos_modalidades.codigo = 4;
-                }
-                if (tipo === 2) {
-                    response.data.registro.tipos_modalidades.codigo = 1;
-                    response.data.registro.descricao = 'Treino coletivo as 19:30 no Parque das Nacoes';
-                }
-                $scope.xxx = response.data.registro;
-                mct.Itens.push(response.data.registro);
-                $scope.gravar(response.data.registro);
+            $scope.retornoEnvioEmail = response.data;
+            if ($scope.retornoEnvioEmail.resultado) {
+                $scope.msgEnvioEmail = "E-mail enviado.";
+            } else {
+                $scope.msgEnvioEmail = "Erro enviando e-mail.";
             }
         });
     }
 
-    $scope.loadTreinosPreCadastrados = function () {
-        $http.post(
-                "gravar.jsp",
-                {
-                    params: {
-                        "acao-gravar": "consultaSQL",
-                        "consulta": "treinosPreCadastrados"
+    $scope.TreinoFixos = function (mc, mct, tipo) {
+        var lParam = {
+            "consulta": "treino-fixos",
+            "tipo": tipo,
+            "dia": mct.dia,
+            "i_clientes": mc.i_clientes,
+            "i_usuarios": mc.i_usuarios,
+            "i_micro_ciclo": mc.i_micro_ciclo
+
+        };
+
+        $http.post("consulta.jsp", lParam).then(function (response) {
+            newRegistro=response.data;
+            mct.Itens.push(newRegistro);
+            $scope.gravar(newRegistro);
+        });
+
+//        var lParams = {
+//            params:
+//                    {
+//                        "tabela": "micro_ciclo_treinos",
+//                        "acao": 1,
+//                        "dia": mct.dia,
+//                        "i_clientes": mc.i_clientes,
+//                        "i_usuarios": mc.i_usuarios,
+//                        "i_micro_ciclo": mc.i_micro_ciclo
+//
+//                    }
+//        };
+//
+//        $http.post("gravar.jsp", lParams).then(function (response) {
+//            $scope.retornoGravar = response.data;
+//            if ($scope.retornoGravar.resultado) {
+//                response.data.registro.ctrl_status = 1;
+//                if (tipo === 1) {
+//                    response.data.registro.tipos_modalidades.codigo = 4;
+//                }
+//                if (tipo === 2) {
+//                    response.data.registro.tipos_modalidades.codigo = 1;
+//                    response.data.registro.descricao = 'Treino coletivo as 19:30 no Parque das Nações';
+//                    response.data.registro.descricaoF = response.data.registro.descricao;
+//                }
+//                mct.Itens.push(response.data.registro);
+//                $scope.gravar(response.data.registro);
+//            }
+//        });
+    }
+
+    $scope.loadTreinosPreCadastrados = function (gerarAleatorio) {
+
+        lParam = {
+            "consulta": "treinosPreCadastrados",
+            "i_usuarios": $scope.registroEmEdicao.i_usuarios
+        };
+
+        $http.post("consulta.jsp", lParam).then(function (response) {
+            if (response.data.resultado === true) {
+                $scope.treinosPreCadastrados = response.data.dados;
+
+                if (gerarAleatorio === 1) {
+                    if ($scope.treinosPreCadastrados.length > 0) {
+                        pos = cadastros.getRandomIntInclusive(0, $scope.treinosPreCadastrados.length - 1);
+                        $scope.selecionaTreinosPreCadastrados($scope.treinosPreCadastrados[pos]);
                     }
                 }
-        )
-                .then(function (response) {
-                    if (response.data.resultado === true) {
-                        $scope.treinosPreCadastrados = response.data.dados;
-                    }
-                });
+
+            }
+        });
+
     };
 
     $scope.excluir = function (mct_dia, mct) {
@@ -271,19 +325,91 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
     };
 
     $scope.desSelecionarAtleta();
-    $scope.loadTreinosPreCadastrados();
 
-    $scope.showTreinosPreCadastrados = function (item) {
+    $scope.showTreinosPreCadastrados = function (item, gerarAleatorio) {
         $scope.registroEmEdicao = item;
-        $('#treinosPreCadastrados').modal('show');
+        $scope.loadTreinosPreCadastrados(gerarAleatorio);
+        if (gerarAleatorio === 0) {
+            $('#treinosPreCadastrados').modal('show');
+        }
     }
 
     $scope.selecionaTreinosPreCadastrados = function (item) {
         $scope.registroEmEdicao.descricao = item.descricao;
+        $scope.registroEmEdicao.i_treinosPreCadastrados = item.i_treinosPreCadastrados;
         $('#treinosPreCadastrados').modal('hide');
     }
 
+    $scope.copiarPlanilha = function () {
+        $scope.planilhaCopiada = {
+            "i_usuarios": $scope.microCicloAtleta[0].i_usuarios,
+            "inicio": $scope.microCicloAtleta[0].inicio,
+            "nome": $scope.atleta.nome + "(" + $scope.microCicloAtleta[0].inicioF + " a " + $scope.microCicloAtleta[0].fimF + ")"
+        }
+        $scope.hasPlanilhaCopiada = true;
+//        $scope.planilhaCopiada = $scope.microCicloAtleta[0];
+    }
+
+    $scope.colarPlanilha = function () {
+        $scope.planilhaColar = {
+            "i_usuarios": $scope.microCicloAtleta[0].i_usuarios,
+            "inicio": $scope.microCicloAtleta[0].inicio
+        }
 
 
+        var lParams = {
+            "copiar": $scope.planilhaCopiada,
+            "colar": $scope.planilhaColar
+        };
+
+        $http.post("copiarMicroCicloTreino.jsp", lParams).then(function (response) {
+            $scope.retornoCopiar = response.data;
+            $scope.loadMicroCicloAtleta(0);
+        });
+
+    }
+
+    $scope.gravarMicroCiclo = function (registro) {
+        var lParams = {
+            "registro": registro
+        };
+
+        $http.post("GravarMicroCiclo.jsp", lParams).then(function (response) {
+            $scope.retornoGravarMicroCiclo = response.data;
+        });
+    }
+
+    $scope.gravarGrupo = function (item) {
+        var lParams = {
+            "consulta": "grupos-gravar-atleta",
+            "dados": {
+                "i_usuarios": item.codigo,
+                "i_grupos_atletas": item.grupo.codigo
+            }
+        };
+
+        $http.post("consulta.jsp", lParams).then(function (response) {
+            $scope.retornoGravarGrupo = response.data;
+        });
+    }
+
+    $scope.getCorModalidadeDia = function (modalidade) {
+        var cor;
+        if (modalidade === 4) {
+            cor = '#e0e0e0';
+        } else if (modalidade > 0) {
+            cor = '#40bf40';
+        } else {
+            cor = '#ff5c33';
+        }
+
+        return cor;
+    }
+
+
+//    setTimeout($scope.atualizaSessao(), 3000);
+    setInterval(function () {
+        $scope.atualizaSessao();
+    }, 60000);
 
 })

@@ -12,7 +12,7 @@
 
     if (request.getParameter("acao") == null) {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "UTF-8"));
         if (br != null) {
             params = br.readLine();
         } else {

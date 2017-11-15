@@ -18,7 +18,7 @@
     JSONObject jsonObj;
     JSONArray dados = new JSONArray();
 
-    BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+    BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "UTF-8"));
     if (br != null) {
         params = br.readLine();
     } else {
@@ -46,8 +46,7 @@
         out.print("**Erro**" + e.toString());
     }
 
-    Arquivo.gravarLog(params);
-
+//    Arquivo.gravarLog(params);
     Conexao conexao = new Conexao();
     conexao.conectar();
 
@@ -68,7 +67,7 @@
                         + "cpf, rg, endereco, cidade, estado, cep, "
                         + "observacoes, telefone_1, telefone_2 "
                         + "from usuarios "
-                        + "order by 1, 2";
+                        + "order by nome, codigo";
             }
         }
         if (tabela.equals("atletas")) {
@@ -77,24 +76,44 @@
             dia = "cast('" + dia + "' as date)";
 
             if (!sessaoUsuario.isCriaPlanilhas()) {
-                lsWhere = " where i_usuarios=" + sessaoUsuario.getCodigoUsuario() + " ";
+                lsWhere = " and i_usuarios=" + sessaoUsuario.getCodigoUsuario() + " ";
             }
 
-            sql = "select i_usuarios as codigo, i_clientes, nome, email,"
-                    + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 0 day ) ),-1 ) as Dia2,"
-                    + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 1 day ) ),-1 ) as Dia3,"
-                    + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 2 day ) ),-1 ) as Dia4,"
-                    + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 3 day ) ),-1 ) as Dia5,"
-                    + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 4 day ) ),-1 ) as Dia6,"
-                    + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 5 day ) ),-1 ) as Dia7,"
-                    + "       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 6 day ) ),-1 ) as Dia8"
-                    + "  from usuarios u "
-                    + " " + lsWhere
-                    + " order by 1, 2";
+            sql = "select u.i_usuarios as codigo, u.i_clientes, u.nome, u.email,"
+                    + "\n       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 0 day ) ),-1 ) as Dia2,"
+                    + "\n       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 1 day ) ),-1 ) as Dia3,"
+                    + "\n       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 2 day ) ),-1 ) as Dia4,"
+                    + "\n       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 3 day ) ),-1 ) as Dia5,"
+                    + "\n       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 4 day ) ),-1 ) as Dia6,"
+                    + "\n       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 5 day ) ),-1 ) as Dia7,"
+                    + "\n       coalesce( (select min(i_tipos_modalidades) from micro_ciclo_treinos t where t.i_usuarios = u.i_usuarios and dia = date_add( " + dia + ", interval 6 day ) ),-1 ) as Dia8,"
+                    + "\n       (case coalesce( mc.situacao,-1 ) "
+                    + "\n          when 0 then 'A fazer'"
+                    + "\n          when 1 then 'A confirmar'"
+                    + "\n          when 2 then 'Concluída'"
+                    + "\n       end) as situacao,"
+                    + "\n       mc.data_email,"
+                    + "\n       mc.data_conclusao,"
+                    + "\n       u.i_grupos_atletas, "
+                    + "\n       coalesce( (select g.nome from grupos_atletas g where g.i_grupos_atletas = u.i_grupos_atletas and g.i_grupos_atletas = u.i_grupos_atletas), '- - -' ) as nomeGrupo  "
+                    + "\n  from usuarios u,"
+                    + "\n       micro_ciclo mc "
+                    + "\n  where u.recebe_planilha=1 " + lsWhere
+                    + "\n    and mc.i_usuarios = u.i_usuarios "
+                    + "\n    and mc.inicio = " + dia
+                    + "\n order by mc.situacao, u.nome ";
         }
         if (tabela.equals("atleta_micro_ciclo")) {
             int i_usuarios = jsonObj.getJSONObject("params").optInt("i_usuarios", 0);
-            String dia = jsonObj.getJSONObject("params").optString("dia", "2017-09-25");
+            String dia = jsonObj.getJSONObject("params").optString("dia", "");
+
+            if (dia.equals("")) {
+                FormatacaoDatas formatacaoDatas = new FormatacaoDatas();
+                formatacaoDatas.setCurrentDate();
+                formatacaoDatas.addDia(-formatacaoDatas.getDiaSemanaN() + 2);
+                dia = formatacaoDatas.getDataYMD();
+            }
+
             dia = "cast('" + dia + "' as date)";
             if (jsonObj.getJSONObject("params").optInt("navegacao", 0) == 1) {
                 dia = "date_add(" + dia + ", interval 7 day )";
@@ -102,7 +121,9 @@
             if (jsonObj.getJSONObject("params").optInt("navegacao", 0) == -1) {
                 dia = "date_add(" + dia + ", interval -7 day )";
             }
-            sql = "select i_micro_ciclo, i_clientes, i_usuarios, inicio, fim, situacao, comentario_treinador, comentario_atleta from micro_ciclo where i_usuarios = " + i_usuarios + " and inicio=" + dia;
+            sql = "select i_micro_ciclo, i_micro_ciclo as codigo, i_clientes, i_usuarios, inicio, fim, situacao, comentario_treinador, comentario_atleta "
+                    + " from micro_ciclo "
+                    + " where i_usuarios = " + i_usuarios + " and inicio=" + dia;
         }
         if (tabela.equals("atleta_micro_ciclo_treinos")) {
             int i_usuarios = jsonObj.getJSONObject("params").optInt("i_usuarios", 0);
@@ -110,7 +131,7 @@
             sql = "select i_micro_ciclo_treinos as codigo, i_micro_ciclo, i_clientes, i_usuarios, tipo, dia, ordem, i_tipos_modalidades, "
                     + "i_tipos_intensidades, i_tipos_treinos, i_tipos_distancias, i_tipos_percursos, descricao, "
                     + "tempo_treino_minimo, tempo_treino_maximo, tempo_treino_realizado, fc_media, distancia, "
-                    + "i_micro_ciclo_treinos_planejado, feedback,"
+                    + "i_micro_ciclo_treinos_planejado, feedback, i_treinosPreCadastrados,"
                     + "(select s.descricao from tipos_modalidades s where s.i_clientes=p.i_clientes and s.i_tipos_modalidades=p.i_tipos_modalidades) as s_tipos_modalidades, "
                     + "(select s.descricao from tipos_treinos s where s.i_clientes=p.i_clientes and s.i_tipos_treinos=p.i_tipos_treinos) as s_tipos_treinos, "
                     + "(select s.descricao from tipos_intensidades s where s.i_clientes=p.i_clientes and s.i_tipos_intensidades=p.i_tipos_intensidades) as s_tipos_intensidades, "
@@ -138,8 +159,7 @@
         }
 
 //        out.print(sql);
-        Arquivo.gravarLog("sql: " + sql);
-
+//        Arquivo.gravarLog("sql: " + sql);
         if (!sql.equals("")) {
             dados = rsJson.getJsonBySQLStr(sql);
         }
@@ -181,8 +201,11 @@
 
                 Date diaJsonItem = FormatacaoDatas.ymdToDate(jsonItem.get("dia").toString());
                 formatacaoDatas = new FormatacaoDatas(diaJsonItem);
-                Arquivo.gravarLog(jsonItem.get("dia").toString() + " " + formatacaoDatas.getDia().toString() + " " + formatacaoDatas.getDataDMY() + " " + diaJsonItem.toString());
+//                Arquivo.gravarLog(jsonItem.get("dia").toString() + " " + formatacaoDatas.getDia().toString() + " " + formatacaoDatas.getDataDMY() + " " + diaJsonItem.toString());
                 jsonItem.put("dia", formatacaoDatas.getDataDMY());
+
+                String descricao = jsonItem.optString("descricao");
+                jsonItem.put("descricaoF", descricao.replaceAll("\n", "<br>"));
 
                 if (!dia.equals(formatacaoDatas.getDia())) {
                     jsonLinha = new JSONArray();
@@ -244,11 +267,17 @@
                 jsonItem.put("inicioF", formatacaoDatas.diaMes());
                 formatacaoDatas = new FormatacaoDatas(FormatacaoDatas.ymdToDate(jsonItem.get("fim").toString()));
                 jsonItem.put("fimF", formatacaoDatas.diaMes());
+
+                JSONObject jsonSitucao = new JSONObject();
+                jsonSitucao.put("codigo", jsonItem.getInt("situacao"));
+                jsonSitucao.put("descricao", "");
+                jsonItem.put("situacaoObj", jsonSitucao);
+
             }
         }
 
     }
-    
+
     conexao.desconectar();
 
     JSONObject jsonRetorno = new JSONObject();
