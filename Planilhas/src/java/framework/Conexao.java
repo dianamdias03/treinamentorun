@@ -2,8 +2,7 @@ package framework;
 
 import java.sql.*;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class Conexao {
 
@@ -13,14 +12,13 @@ public class Conexao {
     public boolean conectar() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             System.out.println("Erro carregando a classe");
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLException: " + ex.toString());
         }
 
         try {
-//            conn = DriverManager.getConnection("jdbc:mysql://localhost/treinos", "root", "FUOKs3BD_");
 
             Properties prop = new Properties();
             prop.put("charSet", "latin1");
@@ -28,16 +26,6 @@ public class Conexao {
             prop.put("user", "root");
             prop.put("password", "FUOKs3BD_");
             conn = DriverManager.getConnection("jdbc:mysql://localhost/treinos", prop);
-
-//            Statement stmt = conn.createStatement();
-//            stmt.executeUpdate("SET NAMES 'utf8'");
-//            stmt.executeUpdate("SET character_set_connection=utf8");
-//            stmt.executeUpdate("SET character_set_client=utf8");
-//            stmt.executeUpdate("SET character_set_results=utf8");
-//            stmt.executeUpdate("SET character_set_database='utf8'");
-//            stmt.executeUpdate("SET collation_connection='utf8_general_ci'");
-//            stmt.executeUpdate("SET collation_database='utf8_general_ci'");
-//            stmt.executeUpdate("SET collation_server='utf8_general_ci'");
 
         } catch (SQLException ex) {
             System.out.println("Erro conectando");
@@ -76,26 +64,16 @@ public class Conexao {
 
         try {
             stmt = conn.createStatement();
-            //stmt.execute(sql);
 
             Arquivo.gravarSQLChanges(sql);
-//            conn.setCharacterEncoding("utf-8");
-//            stmt.executeUpdate("SET NAMES 'UTF8';");
-//            stmt.executeUpdate("SET CHARACTER SET 'UTF8';");
-//            stmt.executeUpdate("SET NAMES 'utf8'");
-//            stmt.executeUpdate("SET character_set_connection=utf8");
-//            stmt.executeUpdate("SET character_set_client=utf8");
-//            stmt.executeUpdate("SET character_set_results=utf8");;
-//            stmt.executeUpdate("SET character_set_database='utf8'");;
             stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 lastID = rs.getInt(1);
             }
-            // Now do something with the ResultSet ....
+
         } catch (SQLException ex) {
-            // handle any errors
             Arquivo.gravarLog("SQLException: " + ex.getMessage());
             Arquivo.gravarLog("SQLState: " + ex.getSQLState());
             Arquivo.gravarLog("VendorError: " + ex.getErrorCode());

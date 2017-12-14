@@ -34,6 +34,10 @@ public class RegistroJson {
         registro.put(nome, valor);
     }
 
+    public void setItem(String nome, JSONObject valor) {
+        registro.put(nome, valor);
+    }
+
     public JSONObject getRegistro() {
         return registro;
     }

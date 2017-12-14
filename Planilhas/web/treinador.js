@@ -241,46 +241,16 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
         };
 
         $http.post("consulta.jsp", lParam).then(function (response) {
-            newRegistro=response.data;
+            newRegistro = response.data;
             mct.Itens.push(newRegistro);
             $scope.gravar(newRegistro);
         });
-
-//        var lParams = {
-//            params:
-//                    {
-//                        "tabela": "micro_ciclo_treinos",
-//                        "acao": 1,
-//                        "dia": mct.dia,
-//                        "i_clientes": mc.i_clientes,
-//                        "i_usuarios": mc.i_usuarios,
-//                        "i_micro_ciclo": mc.i_micro_ciclo
-//
-//                    }
-//        };
-//
-//        $http.post("gravar.jsp", lParams).then(function (response) {
-//            $scope.retornoGravar = response.data;
-//            if ($scope.retornoGravar.resultado) {
-//                response.data.registro.ctrl_status = 1;
-//                if (tipo === 1) {
-//                    response.data.registro.tipos_modalidades.codigo = 4;
-//                }
-//                if (tipo === 2) {
-//                    response.data.registro.tipos_modalidades.codigo = 1;
-//                    response.data.registro.descricao = 'Treino coletivo as 19:30 no Parque das Nações';
-//                    response.data.registro.descricaoF = response.data.registro.descricao;
-//                }
-//                mct.Itens.push(response.data.registro);
-//                $scope.gravar(response.data.registro);
-//            }
-//        });
     }
 
     $scope.loadTreinosPreCadastrados = function (gerarAleatorio) {
 
         lParam = {
-            "consulta": "treinosPreCadastrados",
+            "consulta": "treinosPreCadastradosUsuario",
             "i_usuarios": $scope.registroEmEdicao.i_usuarios
         };
 
@@ -294,7 +264,6 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
                         $scope.selecionaTreinosPreCadastrados($scope.treinosPreCadastrados[pos]);
                     }
                 }
-
             }
         });
 
@@ -336,7 +305,11 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
 
     $scope.selecionaTreinosPreCadastrados = function (item) {
         $scope.registroEmEdicao.descricao = item.descricao;
-        $scope.registroEmEdicao.i_treinosPreCadastrados = item.i_treinosPreCadastrados;
+        $scope.registroEmEdicao.tipos_modalidades = item.tipos_modalidades;
+        $scope.registroEmEdicao.tipos_treinos = item.tipos_treinos;
+        $scope.registroEmEdicao.tipos_intensidades = item.tipos_intensidades;
+        $scope.registroEmEdicao.tipos_percursos = item.tipos_percursos;
+        $scope.registroEmEdicao.i_treinosPreCadastrados = item.codigo;
         $('#treinosPreCadastrados').modal('hide');
     }
 
@@ -406,6 +379,37 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
         return cor;
     }
 
+    $scope.cadastrarTreinoPreCadastrado = function (item)
+    {
+        $scope.registroEmEdicao=item;
+        $scope.registroTreinoPreCadastrado = {};
+        $scope.registroTreinoPreCadastrado.codigo = 0;
+        $scope.registroTreinoPreCadastrado.descricao = item.descricao;
+        $scope.registroTreinoPreCadastrado.ctrl_status = 2;
+        $scope.registroTreinoPreCadastrado.i_clientes = item.i_clientes;
+        $scope.registroTreinoPreCadastrado.grupos_atletas = $scope.atleta.grupo;
+        $scope.registroTreinoPreCadastrado.tipos_modalidades = item.tipos_modalidades;
+        $scope.registroTreinoPreCadastrado.tipos_treinos = item.tipos_treinos;
+        $scope.registroTreinoPreCadastrado.tipos_intensidades = item.tipos_intensidades;
+        $scope.registroTreinoPreCadastrado.tipos_percursos = item.tipos_percursos;
+        $scope.registroTreinoPreCadastrado.i_treinosPreCadastrados = item.codigo;        
+        $('#modalTreinoPreCadastrados').modal('show');
+
+    };
+
+    $scope.gravarTreinoPreCadastrado = function (item)
+    {
+        $http.post("gravar.jsp", {params: {"tabela": "treinosPreCadastrados", "dados": item}}).then(function (response) {
+            $scope.retornoGravar = response.data;
+            if ($scope.retornoGravar.resultado) {
+                item.ctrl_status = 1;
+                if (item.codigo === 0) {
+                    $scope.registroEmEdicao.i_treinosPreCadastrados = response.data.novoCodigo;
+                }
+                $('#modalTreinoPreCadastrados').modal('hide');
+            }
+        });
+    };
 
 //    setTimeout($scope.atualizaSessao(), 3000);
     setInterval(function () {

@@ -81,6 +81,10 @@ public class GerenciaRequests {
             gravar = new treinos.Grupos();
         }
         
+        if (tabela.equals("treinosPreCadastrados")) {
+            gravar = new treinos.TreinosPreCadastrados();
+        }
+        
         if (gravar == null) {
             Arquivo.gravarLog("Tabela '" + tabela + "' não definida.");
         }

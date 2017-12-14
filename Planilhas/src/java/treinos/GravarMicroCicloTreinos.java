@@ -112,7 +112,7 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
             registro.setItem("tipos_modalidades", 1, "Corrida");
             ConsultasSQL consultasSQL = new ConsultasSQL();
 
-            JSONObject dados = consultasSQL.treinosPreCadastrados(requestsParams);
+            JSONObject dados = consultasSQL.treinosPreCadastradosUsuario(requestsParams);
             JSONArray dadosRegistro = dados.getJSONArray("dados");
 
             int pos = getRandomico(0, dadosRegistro.length() - 1);
@@ -122,6 +122,10 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
                     String descricao = dadosRegistro.getJSONObject(i).optString("descricao");
                     registro.setItem("descricao", descricao);
                     registro.setItem("descricaoF", descricao);
+                    registro.setItem("tipos_modalidades", dadosRegistro.getJSONObject(i).getJSONObject("tipos_modalidades"));
+                    registro.setItem("tipos_intensidades", dadosRegistro.getJSONObject(i).getJSONObject("tipos_intensidades"));
+                    registro.setItem("tipos_treinos", dadosRegistro.getJSONObject(i).getJSONObject("tipos_treinos"));
+                    registro.setItem("tipos_percursos", dadosRegistro.getJSONObject(i).getJSONObject("tipos_percursos"));
                 }
             }
 

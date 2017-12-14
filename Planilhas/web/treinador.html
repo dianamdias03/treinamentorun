@@ -5,13 +5,21 @@
         <title>M3</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <!--        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.min.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
+                <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>-->
+
+        <link href="js/files/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <script src="js/files/jquery.min.js" type="text/javascript"></script>
+        <script src="js/files/bootstrap.min.js" type="text/javascript"></script>
+        <script src="js/files/angular.min.js" type="text/javascript"></script>
+        <script src="js/files/angular-sanitize.min.js" type="text/javascript"></script>
+        <script src="js/files/angular-route.js" type="text/javascript"></script>
+        <script src="js/files/loader.js" type="text/javascript"></script>
 
         <link href="css/treinos.css" rel="stylesheet" type="text/css"/>
         <script src="treinador.js" type="text/javascript"></script>
@@ -240,13 +248,13 @@
                                     </div>
                                     <div ng-show="mct_dia.ctrl_status === 1 && mct_dia.tipos_modalidades.codigo !== 4">
                                         <div class="row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <p>
                                                     <b>Modalidade: </b>
                                                     <a href="" ng-click="mct_dia.ctrl_status = 2">{{mct_dia.tipos_modalidades.descricao}}</a>
                                                 </p>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <b>Treino: </b>
                                                 {{mct_dia.tipos_treinos.descricao}}
                                             </div>
@@ -254,8 +262,9 @@
                                                 <b>Intensidade: </b>
                                                 {{mct_dia.tipos_intensidades.descricao}}
                                             </div>
-                                            <div class="col-md-2">
-
+                                            <div class="col-md-4">
+                                                <b>Tipo de terreno: </b>
+                                                {{mct_dia.tipos_percursos.descricao}}
                                             </div>
                                         </div>
                                         <div class="row" ng-click="mct_dia.ctrl_status = 2">
@@ -286,17 +295,17 @@
                                                     <div class="panel-body">
                                                         <form name="myForm">
                                                             <div class="row">
-                                                                <div class="form-group col-md-3">
+                                                                <div class="form-group col-md-2">
                                                                     <label for="inputDia" class="col-form-label">Data</label>
                                                                     <input id="inputDia" type="text" class="form-control"  ng-model="mct_dia.dia" placeholder="dd/mm/yyy"  min="2013-01-01" max="2020-12-31" required>
                                                                 </div>
-                                                                <div class="form-group col-md-3">
+                                                                <div class="form-group col-md-2">
                                                                     <label for="inputModalidade" class="col-form-label">Modalidade</label>
                                                                     <select id="inputModalidade" class="form-control" ng-options="option.descricao for option in tiposModalidades track by option.codigo"
                                                                             ng-model="mct_dia.tipos_modalidades">
                                                                     </select>
                                                                 </div>
-                                                                <div class="form-group col-md-3">                                                           
+                                                                <div class="form-group col-md-2">                                                           
                                                                     <label for="inputIntensidade" class="col-form-label">Intensidade</label>
                                                                     <select id="inputIntensidade" class="form-control"
                                                                             ng-options="option.descricao for option in tiposIntensidades track by option.codigo" 
@@ -310,6 +319,13 @@
                                                                             ng-model="mct_dia.tipos_treinos">
                                                                     </select>
                                                                 </div>                                                    
+                                                                <div class="form-group col-md-3">                                                           
+                                                                    <label for="inputTerreno" class="col-form-label">Tipo de terreno</label>
+                                                                    <select id="inputTerreno" class="form-control"
+                                                                            ng-options="option.descricao for option in tiposPercursos track by option.codigo" 
+                                                                            ng-model="mct_dia.tipos_percursos">
+                                                                    </select>
+                                                                </div>                                                    
                                                             </div>
                                                             <div class="row">
                                                                 <div class="form-group col-md-12">
@@ -317,8 +333,10 @@
                                                                     <textarea id="inputInstrucoes" class="form-control" ng-model="mct_dia.descricao" rows="8"></textarea>
                                                                     Treino precadastrado: 
                                                                     <a href="" ng-click="showTreinosPreCadastrados(mct_dia, 0)">Listar</a>
-                                                                    -
-                                                                    <a href="" ng-click="showTreinosPreCadastrados(mct_dia, 1)">Automático</a>
+                                                                    - 
+                                                                    <a href="" ng-click="showTreinosPreCadastrados(mct_dia, 1)">Seleção automática</a>
+                                                                    - 
+                                                                    <a href="" ng-click="cadastrarTreinoPreCadastrado(mct_dia)">Cadastrar</a>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
@@ -380,5 +398,61 @@
             </div>
         </div>
 
-    </body>
+        <form>
+            <div id="modalTreinoPreCadastrados" class="modal fade bd-example-modal-lg" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h3 class="modal-title">Treinos pré cadastrados</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="inputModalidade" class="col-form-label">Modalidade</label>
+                                    <select id="inputModalidade" class="form-control" ng-options="option.descricao for option in tiposModalidades track by option.codigo"
+                                            ng-model="registroTreinoPreCadastrado.tipos_modalidades">
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-3">                                                           
+                                    <label for="inputIntensidade" class="col-form-label">Intensidade</label>
+                                    <select id="inputIntensidade" class="form-control"
+                                            ng-options="option.descricao for option in tiposIntensidades track by option.codigo" 
+                                            ng-model="registroTreinoPreCadastrado.tipos_intensidades">
+                                    </select>
+                                </div>                                                      
+                                <div class="form-group col-md-3">                                                           
+                                    <label for="inputTreino" class="col-form-label">Tipo de treino</label>
+                                    <select id="inputTreino" class="form-control"
+                                            ng-options="option.descricao for option in tiposTreinos track by option.codigo" 
+                                            ng-model="registroTreinoPreCadastrado.tipos_treinos">
+                                    </select>
+                                </div>                                                    
+                                <div class="form-group col-md-3">
+                                    <label for="inputModalidade" class="col-form-label">Terreno</label>
+                                    <select id="inputModalidade" class="form-control" ng-options="option.descricao for option in tiposPercursos track by option.codigo"
+                                            ng-model="registroTreinoPreCadastrado.tipos_percursos">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="inputInstrucoes" class="col-form-label">Instruções</label>
+                                    <!--<input id="inputNome" type="text" ng-model="registroTreinoPreCadastrado.descricao" class="form-control" placeholder="Nome">-->
+                                    <textarea id="inputInstrucoes" class="form-control" ng-model="registroTreinoPreCadastrado.descricao" rows="8"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" ng-click="gravarTreinoPreCadastrado(registroTreinoPreCadastrado)">Salvar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+</body>
 </html>

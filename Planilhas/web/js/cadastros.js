@@ -147,6 +147,7 @@ treinoApp.service('cadastros', function () {
         opcoesMenu.push({"link": './criarEventos.html', "descricao": 'Eventos'});
         if (dadosSessao.cria_planilhas) {
             opcoesMenu.push({"link": './grupos.html', "descricao": 'Grupos'});
+            opcoesMenu.push({"link": './TreinosPreCadastrados.html', "descricao": 'Treinos Pré Cadastrados'});
             opcoesMenu.push({"link": './treinador.html', "descricao": 'Treinos'});
         }
 //        opcoesMenu.push({"link": './eventos.html', "descricao": 'Eventos'});

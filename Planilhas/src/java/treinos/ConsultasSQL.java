@@ -23,6 +23,13 @@ import org.json.JSONObject;
  */
 public class ConsultasSQL {
 
+    public JSONObject addCodigoDescricao(int codigo, String descricao) {
+        JSONObject json = new JSONObject();
+        json.put("codigo", codigo);
+        json.put("descricao", descricao);
+        return json;
+    }
+
     public JSONObject planilhaSemanaAtleta(int i_clientes, int i_usuarios, String inicio) {
 
         JSONObject retorno = new JSONObject();
@@ -91,8 +98,9 @@ public class ConsultasSQL {
 
     }
 
-    public JSONObject treinosPreCadastrados(RequestsParams requestsParams) {
+    public JSONObject treinosPreCadastradosUsuario(RequestsParams requestsParams) {
 
+        /*
         JSONObject retorno = new JSONObject();
         JSONArray lista = new JSONArray();
         retorno.put("resultado", false);
@@ -100,7 +108,8 @@ public class ConsultasSQL {
         int i_usuarios = requestsParams.getJsonRequest().optInt("i_usuarios", 0);
 
         String sql = "select descricao, \n"
-                + "       i_treinosPreCadastrados,\n"
+                + "       i_treinosPreCadastrados, "
+                + "\n     i_tipos_intensidades, "
                 + "	   (select count(*) from micro_ciclo_treinos  "
                 + "          where i_usuarios = " + i_usuarios + " "
                 + "            and micro_ciclo_treinos.i_treinosPreCadastrados=treinosPreCadastrados.i_treinosPreCadastrados) as qtde\n"
@@ -125,9 +134,88 @@ public class ConsultasSQL {
                 } else {
                     item.put("qtdeF", qtde + " vezes");
                 }
+                item.put("i_tipos_intensidades", rs.getInt("i_tipos_intensidades"));
                 item.put("descricao", descricao);
                 item.put("descricaoF", descricao.replaceAll("\n", "<br>"));
                 lista.put(item);
+            }
+
+            retorno.put("dados", lista);
+            retorno.put("resultado", true);
+
+            conexao.desconectar();
+
+        } catch (SQLException ex) {
+            Arquivo.gravarLog("Erro lendo treinos pre cadastrados: " + ex.getMessage());
+        }
+
+//        Arquivo.gravarLog(retorno.toString());
+        return retorno;
+        */
+        
+        requestsParams.getJsonRequest().put("qtde",1);
+        
+        return treinosPreCadastrados(requestsParams);
+
+    }
+
+    public JSONObject treinosPreCadastrados(RequestsParams requestsParams) {
+
+        JSONObject retorno = new JSONObject();
+        JSONArray lista = new JSONArray();
+        retorno.put("resultado", false);
+
+        String colunaQtde;
+
+        if (requestsParams.getJsonRequest().optInt("qtde", 0) == 1) {
+            colunaQtde = "	   (select count(*) from micro_ciclo_treinos c "
+                    + "          where c.i_usuarios = " + requestsParams.getJsonRequest().optInt("i_usuarios", 0) + " "
+                    + "            and c.i_treinosPreCadastrados=t.i_treinosPreCadastrados) as qtde\n";
+        } else {
+            colunaQtde = "0 as qtde";
+        }
+
+        String sql = "    select i_treinosPreCadastrados, descricao, i_grupos_atletas, i_tipos_modalidades, i_tipos_intensidades, i_tipos_treinos, i_tipos_percursos, i_tipos_percursos, i_clientes, \n"
+                + "		   (select g.nome from grupos_atletas g where g.i_clientes = t.i_clientes and g.i_grupos_atletas = t.i_grupos_atletas) as s_grupos_atletas,\n"
+                + "           (select s.descricao from tipos_modalidades s where s.i_clientes=t.i_clientes and s.i_tipos_modalidades=t.i_tipos_modalidades) as s_tipos_modalidades,\n"
+                + "           (select s.descricao from tipos_treinos s where s.i_clientes=t.i_clientes and s.i_tipos_treinos=t.i_tipos_treinos) as s_tipos_treinos,\n"
+                + "           (select s.descricao from tipos_intensidades s where s.i_clientes=t.i_clientes and s.i_tipos_intensidades=t.i_tipos_intensidades) as s_tipos_intensidades, \n"
+                + "           (select s.descricao from tipos_percursos s where s.i_clientes=t.i_clientes and s.i_tipos_percursos=t.i_tipos_percursos) as s_tipos_percursos,\n"
+                + "           " + colunaQtde + " \n"
+                + "    from treinosPreCadastrados t\n"
+                + "    where i_clientes = 1\n"
+                + "    order by s_grupos_atletas, i_treinosPreCadastrados;";
+
+        Arquivo.gravarLog(sql);
+        Conexao conexao = new Conexao();
+        conexao.conectar();
+
+        ResultSet rs = conexao.executaSelect(sql);
+
+        try {
+
+            while (rs.next()) {
+                JSONObject item = new JSONObject();
+                String descricao = rs.getString("descricao");
+                item.put("codigo", rs.getInt("i_treinosPreCadastrados"));
+                item.put("i_clientes", rs.getInt("i_clientes"));
+                item.put("descricao", descricao);
+                item.put("descricaoF", descricao.replaceAll("\n", "<br>"));
+                item.put("grupos_atletas", addCodigoDescricao(rs.getInt("i_grupos_atletas"), rs.getString("s_grupos_atletas")));
+                item.put("tipos_modalidades", addCodigoDescricao(rs.getInt("i_tipos_modalidades"), rs.getString("s_tipos_modalidades")));
+                item.put("tipos_treinos", addCodigoDescricao(rs.getInt("i_tipos_treinos"), rs.getString("s_tipos_treinos")));
+                item.put("tipos_intensidades", addCodigoDescricao(rs.getInt("i_tipos_intensidades"), rs.getString("s_tipos_intensidades")));
+                item.put("tipos_percursos", addCodigoDescricao(rs.getInt("i_tipos_percursos"), rs.getString("s_tipos_percursos")));
+
+                int qtde = rs.getInt("qtde");
+                item.put("qtde", qtde);
+                if (qtde == 1) {
+                    item.put("qtdeF", qtde + " vez");
+                } else {
+                    item.put("qtdeF", qtde + " vezes");
+                }
+                lista.put(item);
+
             }
 
             retorno.put("dados", lista);

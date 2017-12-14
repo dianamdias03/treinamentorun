@@ -48,7 +48,11 @@
     if (consulta.equals("grupos-gravar-atleta")) {
         Usuarios usuarios = new Usuarios();
         listaRetorno = usuarios.gravarGrupo(requestsParams);
-//        Arquivo.gravarLog("listaRetorno"+listaRetorno.toString());
+    }
+
+    if (consulta.equals("treinosPreCadastradosUsuario")) {
+        ConsultasSQL consultaSQL = new ConsultasSQL();
+        listaRetorno = consultaSQL.treinosPreCadastradosUsuario(requestsParams);
     }
 
     if (consulta.equals("treinosPreCadastrados")) {
@@ -64,7 +68,8 @@
     if (listaRetorno == null) {
         listaRetorno = new JSONObject();
         listaRetorno.put("resultado", false);
-        listaRetorno.put("msgErro", "Consulta inválida!");
+        listaRetorno.put("msgErro", "Consulta '"+consulta+"' inválida!");
+        Arquivo.gravarLog("Consulta '"+consulta+"' inválida! "+requestsParams.getJsonRequest().toString());
     }
 
     out.print(listaRetorno.toString());

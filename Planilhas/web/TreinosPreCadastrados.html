@@ -1,0 +1,161 @@
+<!doctype html>
+<html ng-app="TreinoApp">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>M3 Assessoria Esportiva</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>    
+                <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>-->
+
+        <link href="js/files/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <script src="js/files/jquery.min.js" type="text/javascript"></script>
+        <script src="js/files/bootstrap.min.js" type="text/javascript"></script>
+        <script src="js/files/angular.min.js" type="text/javascript"></script>
+        <script src="js/files/angular-route.js" type="text/javascript"></script>
+        <script src="js/files/angular-sanitize.min.js" type="text/javascript"></script>
+        <script src="js/files/loader.js" type="text/javascript"></script>
+
+        <script src="TreinosPreCadastrados.js" type="text/javascript"></script>
+        <script src="js/cadastros.js" type="text/javascript"></script>
+        <link href="css/treinos.css" rel="stylesheet" type="text/css"/>
+    </head>
+
+    <body ng-controller="TreinosPreCadastradosCtrl" ng-init="load()">
+
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>&nbsp;M3 Assessoria Esportiva</h2>
+            </div>
+            <div class="col-sm-3 text-right">
+                <h3><a href="meusdados.html">{{dadosSessao.nome}}</a></h3>
+            </div>
+            <div class="col-sm-1 text-right"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs">
+                    <li ng-repeat="item in opcoesMenu"><a href="{{item.link}}">{{item.descricao}}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div ng-view></div>
+
+        <br>
+        <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <h4>Treinos pré cadastrados</h4>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-success" ng-click="novo()">Novo</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+
+
+                    <div class="row" ng-repeat="item in listaRegistros" ng-click="editar(item)">
+                        <div class="col-md-12">
+                            <table style="width: 100%; border-collapse: separate; border-spacing: 10px; border: 1px solid #eeeeee;" >
+                                <tr>
+                                    <td>
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td style="width: 20%"><b>Modalidade: </b> {{item.tipos_modalidades.descricao}}</td>
+                                                <td style="width: 20%"><b>Intensidade: </b> {{item.tipos_intensidades.descricao}}</td>
+                                                <td style="width: 20%"><b>Treino: </b> {{item.tipos_treinos.descricao}}</td>
+                                                <td style="width: 20%"><b>Terreno: </b> {{item.tipos_percursos.descricao}}</td>
+                                                <td style="width: 20%"><b>Grupo: </b> {{item.grupos_atletas.descricao}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td style="width: 90px; vertical-align: top; text-align: left">
+                                                    <b>Instruções: </b>
+                                                </td>
+                                                <td>
+                                                    <p ng-bind-html="item.descricaoF"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form>
+                <div id="modalTreinoPreCadastrados" class="modal fade bd-example-modal-lg" role="dialog">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h3 class="modal-title">Treinos pré cadastrados</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="form-group col-md-3">
+                                        <label for="inputModalidade" class="col-form-label">Modalidade</label>
+                                        <select id="inputModalidade" class="form-control" ng-options="option.descricao for option in tiposModalidades track by option.codigo"
+                                                ng-model="registro.tipos_modalidades">
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3">                                                           
+                                        <label for="inputIntensidade" class="col-form-label">Intensidade</label>
+                                        <select id="inputIntensidade" class="form-control"
+                                                ng-options="option.descricao for option in tiposIntensidades track by option.codigo" 
+                                                ng-model="registro.tipos_intensidades">
+                                        </select>
+                                    </div>                                                      
+                                    <div class="form-group col-md-3">                                                           
+                                        <label for="inputTreino" class="col-form-label">Tipo de treino</label>
+                                        <select id="inputTreino" class="form-control"
+                                                ng-options="option.descricao for option in tiposTreinos track by option.codigo" 
+                                                ng-model="registro.tipos_treinos">
+                                        </select>
+                                    </div>                                                    
+                                    <div class="form-group col-md-3">
+                                        <label for="inputModalidade" class="col-form-label">Terreno</label>
+                                        <select id="inputModalidade" class="form-control" ng-options="option.descricao for option in tiposPercursos track by option.codigo"
+                                                ng-model="registro.tipos_percursos">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="inputInstrucoes" class="col-form-label">Instruções</label>
+                                        <!--<input id="inputNome" type="text" ng-model="registro.descricao" class="form-control" placeholder="Nome">-->
+                                        <textarea id="inputInstrucoes" class="form-control" ng-model="registro.descricao" rows="8"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" ng-click="gravar(registro)">Salvar</button>
+                                <button type="button" class="btn btn-secondary" ng-click="excluir(registro)">Excluir</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </body>
+</html>
