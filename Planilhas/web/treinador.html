@@ -26,7 +26,7 @@
         <script src="js/cadastros.js" type="text/javascript"></script>
     </head>
 
-    <body ng-controller="TreinadorCtrl" >
+    <body ng-controller="TreinadorCtrl">
 
         <div class="row">
             <div class="col-sm-8">
@@ -85,9 +85,9 @@
                             <thead>
                                 <tr>
                                     <th>Nome</th>
-                                    <th>Treinos ({{contaOk}}/{{conta}})</th>
-                                    <th>Grupo</th>
-                                    <th>Situação</th>
+                                    <!-- <th>Treinos ({{contaOk}}/{{conta}})</th> -->
+                                    <!-- <th>Grupo</th> -->
+                                    <th>Situação ({{contaOk}}/{{conta}})</th>
                                     <th>Email</th>
                                     <!--<th>Data conclusão</th>-->
                                 </tr>
@@ -97,7 +97,7 @@
                                     <td ng-click="editar(item)">
                                         <a ng-click="selecionarAtleta(item)">{{item.nome}}</a>
                                     </td>
-                                    <td ng-click="editar(item)">
+                                    <!-- <td ng-click="editar(item)">
                                         <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia2)}}">Seg</span>
                                         <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia3)}}">Ter</span>
                                         <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia4)}}">Qua</span>
@@ -108,7 +108,7 @@
                                     </td>
                                     <td>
                                         {{item.nomeGrupo}}
-                                    </td>
+                                    </td> -->
                                     <td>
                                         {{item.situacao}}
                                     </td>
