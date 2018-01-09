@@ -95,6 +95,7 @@
                     + "\n       mc.data_email,"
                     + "\n       mc.data_conclusao,"
                     + "\n       u.i_grupos_atletas, "
+                    + "\n       u.observacoes, "
                     + "\n       coalesce( (select g.nome from grupos_atletas g where g.i_grupos_atletas = u.i_grupos_atletas and g.i_grupos_atletas = u.i_grupos_atletas), '- - -' ) as nomeGrupo  "
                     + "\n  from usuarios u,"
                     + "\n       micro_ciclo mc "
@@ -254,6 +255,15 @@
                     String lsDia = format.format((Date) jsonItem.get("data_nascto"));
                     jsonItem.put("data_nascto", lsDia);
                 }
+            }
+        }
+
+        if (tabela.equals("atletas") && dados != null) {
+            JSONObject jsonItem;
+            for (int i = 0; i < dados.length(); i++) {
+                jsonItem = dados.getJSONObject(i);
+                String descricao = jsonItem.optString("observacoes");
+                jsonItem.put("observacoes", descricao.replaceAll("\n", "<br>"));
             }
         }
 

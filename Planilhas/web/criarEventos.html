@@ -64,7 +64,43 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="item in listaRegistros" ng-click="visualizar(item)">
+                            <tr ng-repeat="item in listaRegistros | filter:{passado:0}" 
+                                ng-click="visualizar(item)">
+                                <td>{{item.nome}}</td>
+                                <td>{{item.dia}}</td>
+                                <td>{{item.local}}</td>
+                                <td>{{item.opcoesParticipacao}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    * clique na linha do evento para visualizar detalhes do eventos.
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <div class="panel panel-default" ng-show="!eventoSelecionado">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Eventos antigos</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Dia</th>
+                                <th>Local</th>
+                                <th>Opções de participação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in listaRegistros | filter:{passado:1}" 
+                                ng-click="visualizar(item)">
                                 <td>{{item.nome}}</td>
                                 <td>{{item.dia}}</td>
                                 <td>{{item.local}}</td>

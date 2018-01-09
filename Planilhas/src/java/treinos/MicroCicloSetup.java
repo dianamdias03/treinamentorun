@@ -54,7 +54,7 @@ public class MicroCicloSetup {
 
     public void gerarPeriodos(JspWriter out, int i_usuarios) throws IOException {
 
-        String lsDiaInicio = "04/09/2017";
+        String lsDiaInicio = "08/01/2018";
         String lsDiaFim = "31/12/2018";
         FormatacaoDatas formatacaoDatas;
         MicroCicloSetup microCicloSetup = new MicroCicloSetup();

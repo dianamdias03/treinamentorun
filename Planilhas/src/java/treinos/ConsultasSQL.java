@@ -151,10 +151,9 @@ public class ConsultasSQL {
 
 //        Arquivo.gravarLog(retorno.toString());
         return retorno;
-        */
-        
-        requestsParams.getJsonRequest().put("qtde",1);
-        
+         */
+        requestsParams.getJsonRequest().put("qtde", 1);
+
         return treinosPreCadastrados(requestsParams);
 
     }
@@ -287,10 +286,12 @@ public class ConsultasSQL {
         JSONArray lista = new JSONArray();
         retorno.put("resultado", false);
 
-        String sql = "select i_eventos as codigo, i_clientes, nome, dia, descricao, distancias, local, opcoesParticipacao "
+        String sql = "select i_eventos as codigo, i_clientes, nome, dia, descricao, distancias, local, "
+                + " opcoesParticipacao, \n"
+                + " (case when dia < current_date() then 1 else 0 end) as passado "
                 + " from eventos "
                 + " where i_clientes=" + i_clientes
-                + " order by dia, nome;";
+                + " order by dia, nome";
 
         Conexao conexao = new Conexao();
         conexao.conectar();
@@ -310,6 +311,7 @@ public class ConsultasSQL {
                 item.put("nome", rs.getString("nome"));
                 item.put("distancias", rs.getString("distancias"));
                 item.put("local", rs.getString("local"));
+                item.put("passado", rs.getInt("passado"));
                 item.put("dia", formatacaoDatas.getDataDMY());
                 item.put("opcoesParticipacao", rs.getString("opcoesParticipacao"));
                 item.put("descricao", descricao);
