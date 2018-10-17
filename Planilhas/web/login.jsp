@@ -36,9 +36,9 @@
 
         SessaoUsuario sessaoUsuario = new SessaoUsuario(session);
 
-        if (sessaoUsuario.validaUsuarioSenha(usuario, senha)) {
+        if (!usuario.equals("") && !senha.equals("") && sessaoUsuario.validaUsuarioSenha(usuario, senha)) {
             session.setAttribute("emailUsuario", usuario);
-            Arquivo.gravarLog("Usuário logado: "+usuario);
+            Arquivo.gravarLog("Usuário logado: " + usuario);
             sucesso = true;
         } else {
             session.invalidate();

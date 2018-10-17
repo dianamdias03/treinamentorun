@@ -159,7 +159,7 @@ treinoApp.service('cadastros', function () {
     }
 
     this.getNomeCliente = function () {
-        return 'M3 Assessoria Esportiva';
+        return 'M3 Grupo de Corridas';
     }
 
     this.getRandomIntInclusive = function(min, max) {
