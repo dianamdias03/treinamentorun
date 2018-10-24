@@ -85,11 +85,11 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
         registro.setItem("codigo", 0);
         registro.setItem("tipo", 1);
         registro.setItem("dia", requestsParams.getJsonRequest().optString("dia", ""));
-        registro.setItem("tipos_modalidades", 1, "Não informado");
-        registro.setItem("tipos_intensidades", 1, "Não informado");
-        registro.setItem("tipos_treinos", 1, "Não informado");
+        registro.setItem("tipos_modalidades", 1, "Corrida");
+        registro.setItem("tipos_intensidades", 1, " Z1 - Leve");
+        registro.setItem("tipos_treinos", 1, "Ritmo");
         registro.setItem("tipos_distancias", 1, "km");
-        registro.setItem("tipos_percursos", 1, "Não informado");
+        registro.setItem("tipos_percursos", 1, "Subidas leves");
         registro.setItem("descricao", "");
         registro.setItem("feedback", "");
         registro.setItem("i_clientes", requestsParams.getJsonRequest().optInt("i_clientes", 0));
@@ -103,7 +103,7 @@ public class GravarMicroCicloTreinos extends framework.Gravar {
             registro.setItem("tipos_modalidades", 4, "Não informado");
         }
         if (tipo == 2) {
-            registro.setItem("tipos_modalidades", 1, "Não informado");
+            registro.setItem("tipos_modalidades", 1, "Corrida");
             String descricao = "Treino coletivo as 19:30 no Parque das Nações";
             registro.setItem("descricao", descricao);
             registro.setItem("descricaoF", descricao);

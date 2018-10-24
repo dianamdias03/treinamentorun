@@ -278,9 +278,10 @@ public class ConsultasSQL {
 
     }
 
-    public JSONObject criarEventos() {
+    public JSONObject criarEventos(RequestsParams requestsParams) {
 
         int i_clientes = 1;
+        int i_usuarios = requestsParams.getJsonRequest().getInt("i_usuarios");
 
         JSONObject retorno = new JSONObject();
         JSONArray lista = new JSONArray();
@@ -288,7 +289,8 @@ public class ConsultasSQL {
 
         String sql = "select i_eventos as codigo, i_clientes, nome, dia, descricao, distancias, local, "
                 + " opcoesParticipacao, \n"
-                + " (case when dia < current_date() then 1 else 0 end) as passado "
+                + " (case when dia < current_date() then 1 else 0 end) as passado,"
+                + " coalesce( (select min(op.opcao) from eventosParticipacoes op where op.i_usuarios=" + i_usuarios + " and op.i_eventos=eventos.i_eventos), 'Não informado') as opcaoSelecionada "
                 + " from eventos "
                 + " where i_clientes=" + i_clientes
                 + " order by dia, nome";
@@ -297,9 +299,11 @@ public class ConsultasSQL {
         conexao.conectar();
 
 //        Arquivo.gravarLog(sql);
-        ResultSet rs = conexao.executaSelect(sql);
-
         try {
+
+            System.out.println("sql: " + sql);
+
+            ResultSet rs = conexao.executaSelect(sql);
 
             while (rs.next()) {
                 FormatacaoDatas formatacaoDatas = new FormatacaoDatas(rs.getDate("dia"));
@@ -314,6 +318,7 @@ public class ConsultasSQL {
                 item.put("passado", rs.getInt("passado"));
                 item.put("dia", formatacaoDatas.getDataDMY());
                 item.put("opcoesParticipacao", rs.getString("opcoesParticipacao"));
+                item.put("opcaoSelecionada", rs.getString("opcaoSelecionada"));
                 item.put("descricao", descricao);
                 item.put("descricaoF", descricao.replaceAll("\n", "<br>"));
                 lista.put(item);
@@ -545,6 +550,7 @@ public class ConsultasSQL {
         /*
          JSONObject teste = new JSONObject();
          RequestsParams requestsParams = new RequestsParams();
+JSONObject teste = new JSONObject();
          teste.put("i_usuarios", 1);
          requestsParams.setParams(teste.toString());
          System.out.println("Resultado:\n" + consultasSQL.dadosUsuario(requestsParams));

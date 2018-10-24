@@ -7,6 +7,7 @@ package treinos;
 
 import framework.FormatacaoDatas;
 import framework.RequestsAction;
+import framework.RequestsParams;
 import org.json.JSONObject;
 
 public class RequestConsultaSQL extends RequestsAction {
@@ -26,8 +27,12 @@ public class RequestConsultaSQL extends RequestsAction {
 //            ConsultasSQL consultasSQL = new ConsultasSQL();
 //            retorno = consultasSQL.treinosPreCadastrados();
         } else if (getParams().optString("consulta").equals("criarEventos")) {
+            JSONObject parametros = new JSONObject();
+            parametros.put("i_usuarios", getParams().optInt("i_usuarios"));
             ConsultasSQL consultasSQL = new ConsultasSQL();
-            retorno = consultasSQL.criarEventos();
+            RequestsParams requestsParams = new RequestsParams();
+            requestsParams.setParams(parametros.toString());
+            retorno = consultasSQL.criarEventos(requestsParams);
         }
         return retorno;
     }

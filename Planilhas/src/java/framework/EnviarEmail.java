@@ -29,7 +29,7 @@ public class EnviarEmail {
         enviarEmail.enviarHtml(
                 "adrianomdias@gmail.com",
                 null,
-                "Teste de email da M3 Grupo de Corridas",
+                "Teste de email da M3 Grupo de Corrida",
                 "Adriano,"
                 + "\n\nEm breve você receberá os seus treinos por email!");
 
@@ -84,7 +84,7 @@ public class EnviarEmail {
                 objetoEmail.addTo(enderecoEmail2);
             }
 
-            objetoEmail.setFrom(EnviarEmail.email, "M3 Grupo de Corridas");
+            objetoEmail.setFrom(EnviarEmail.email, "M3 Grupo de Corrida");
             objetoEmail.addReplyTo(EnviarEmail.reply, "Treinador Marcelo Olimpio");
             objetoEmail.addReplyTo("m3esporte@zoho.com", "Treinador Marcelo Olimpio");
             objetoEmail.setSubject(titulo);

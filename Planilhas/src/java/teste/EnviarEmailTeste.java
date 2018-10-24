@@ -76,7 +76,7 @@ public class EnviarEmailTeste {
         try {
             email.addTo("adrianomdias@gmail.com");
 
-            email.setFrom("m3acessoriaesportiva@zoho.com", "M3 Grupo de Corridas");
+            email.setFrom("m3acessoriaesportiva@zoho.com", "M3 Grupo de Corrida");
             email.setSubject("Titulo do email");
 
             email.setHtmlMsg("<html><body><b>Atleta: Adriano Dias</b><br><b>Periodo: 18/set a 24/set</b><br><br><br><table border=1 style=\"width: 100%; border-collapse: collapse; border-style: solid; border-color: #f2f2fa #f2f2fa; \"><tr style=\"background-color: #f2f2f2\"><td style=\"padding: 10px;\"><h3>Segunda&#45;feira&nbsp;&#45;&nbsp;18&#x2F;set</h3></td></tr><tr><td style=\"padding: 15px;\">&#x2A;&#x2A;&nbsp;FOLGA&nbsp;&#x2A;&#x2A;<br></td></tr></table><br><table border=1 style=\"width: 100%; border-collapse: collapse; border-style: solid; border-color: #f2f2fa #f2f2fa; \"><tr style=\"background-color: #f2f2f2\"><td style=\"padding: 10px;\"><h3>Terca&#45;feira&nbsp;&#45;&nbsp;19&#x2F;set</h3></td></tr><tr><td style=\"padding: 15px;\"><b>Natacao</b>:<br>&#45;&nbsp;Nado&nbsp;de&nbsp;costas\n"

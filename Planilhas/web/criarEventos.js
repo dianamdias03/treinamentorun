@@ -24,28 +24,31 @@ treinoApp.controller('CriaEventosCtrl', function ($scope, $rootScope, $location,
     $scope.load = function ()
     {
 
+        $scope.eventoSelecionado = null;
         $http.post("sessao.jsp", {}).then(function (response) {
             $scope.dadosSessao = response.data;
             if (!$scope.dadosSessao.logado) {
                 document.location.href = './login.html';
             } else {
                 $scope.opcoesMenu = cadastros.getMenus($scope.dadosSessao);
+
+                $http.post(
+                        "gravar.jsp", {
+                            params: {
+                                "acao-gravar": "consultaSQL",
+                                "consulta": "criarEventos",
+                                "i_usuarios": $scope.dadosSessao.i_usuarios
+                            }
+                        }
+                )
+                        .then(function (response) {
+                            if (response.data.resultado === true) {
+                                $scope.listaRegistros = response.data.dados;
+                            }
+                        });
             }
         });
 
-        $http.post(
-                "gravar.jsp", {
-                    params: {
-                        "acao-gravar": "consultaSQL",
-                        "consulta": "criarEventos"
-                    }
-                }
-        )
-                .then(function (response) {
-                    if (response.data.resultado === true) {
-                        $scope.listaRegistros = response.data.dados;
-                    }
-                });
 
 
     };
@@ -77,7 +80,8 @@ treinoApp.controller('CriaEventosCtrl', function ($scope, $rootScope, $location,
             params:
                     {
                         "tabela": "criarEventos",
-                        "acao": 1
+                        "acao": 1,
+                        "i_usuarios": $scope.dadosSessao.i_usuarios
                     }
         };
 
@@ -134,6 +138,7 @@ treinoApp.controller('CriaEventosCtrl', function ($scope, $rootScope, $location,
 
         $scope.eventoSelecionado = (item !== null);
         $scope.eventoVisualizacao = item;
+        $scope.convidadosAlterados = false;
 
         if ($scope.eventoSelecionado) {
 
@@ -142,6 +147,10 @@ treinoApp.controller('CriaEventosCtrl', function ($scope, $rootScope, $location,
                 "i_eventos": $scope.eventoVisualizacao.codigo,
                 "i_usuarios": $scope.dadosSessao.i_usuarios
             };
+
+
+            $scope.i_eventosParticipacoes = 0;
+            $scope.opcaoAtleta = "";
 
             $http.post("consulta.jsp", lParams).then(function (response) {
                 $scope.convidados2 = response.data.dados;

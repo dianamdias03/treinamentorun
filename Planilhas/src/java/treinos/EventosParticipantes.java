@@ -30,7 +30,7 @@ public class EventosParticipantes {
 
         conexao = new Conexao();
         conexao.conectar();
-        
+
         Arquivo.gravarLog(requestsParams.getJsonRequest().toString());
 
         gravarTabela(i_eventosParticipacoes,
@@ -45,12 +45,12 @@ public class EventosParticipantes {
         for (int i = 0; i < listaParticipantes.length(); i++) {
             JSONObject participante = listaParticipantes.getJSONObject(i);
             gravarTabela(
-                    participante.optInt("i_eventosParticipacoes", 0), 
-                    i_eventos, 
-                    0, 
-                    i_usuarios, 
-                    participante.optString("nome", ""), 
-                    1, 
+                    participante.optInt("i_eventosParticipacoes", 0),
+                    i_eventos,
+                    0,
+                    i_usuarios,
+                    participante.optString("nome", ""),
+                    1,
                     participante.optInt("distancia", 0),
                     "Convidados"
             );
