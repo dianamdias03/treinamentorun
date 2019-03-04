@@ -10,7 +10,7 @@ import javax.servlet.jsp.JspWriter;
 
 public class MicroCicloSetup {
 
-    public boolean gerarMicroCiclos(String lsInicioPeriodo, int i_usuarios) {
+    public boolean gerarMicroCiclos(String lsInicioPeriodo, long i_usuarios) {
         String sql;
         String whereUsuario;
         boolean resultado;
@@ -52,10 +52,10 @@ public class MicroCicloSetup {
         }
     }
 
-    public void gerarPeriodos(JspWriter out, int i_usuarios) throws IOException {
+    public void gerarPeriodos(JspWriter out, long i_usuarios) throws IOException {
 
-        String lsDiaInicio = "08/01/2018";
-        String lsDiaFim = "31/12/2018";
+        String lsDiaInicio = "03/12/2018";
+        String lsDiaFim = "31/12/2019";
         FormatacaoDatas formatacaoDatas;
         MicroCicloSetup microCicloSetup = new MicroCicloSetup();
 

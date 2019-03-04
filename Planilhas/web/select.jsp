@@ -67,6 +67,7 @@
                         + "cpf, rg, endereco, cidade, estado, cep, "
                         + "observacoes, telefone_1, telefone_2 "
                         + "from usuarios "
+                        + "where exclusao is null "
                         + "order by nome, codigo";
             }
         }
@@ -92,6 +93,7 @@
                     + "\n          when 1 then 'A confirmar'"
                     + "\n          when 2 then 'Concluída'"
                     + "\n       end) as situacao,"
+                    + "\n       coalesce( mc.situacao, 0 ) as codigo_situacao,"
                     + "\n       mc.data_email,"
                     + "\n       mc.data_conclusao,"
                     + "\n       u.i_grupos_atletas, "
@@ -103,6 +105,8 @@
                     + "\n    and mc.i_usuarios = u.i_usuarios "
                     + "\n    and mc.inicio = " + dia
                     + "\n order by mc.situacao, u.nome ";
+
+            //System.out.println("sql treino: " + sql);
         }
         if (tabela.equals("atleta_micro_ciclo")) {
             int i_usuarios = jsonObj.getJSONObject("params").optInt("i_usuarios", 0);
@@ -125,6 +129,7 @@
             sql = "select i_micro_ciclo, i_micro_ciclo as codigo, i_clientes, i_usuarios, inicio, fim, situacao, comentario_treinador, comentario_atleta "
                     + " from micro_ciclo "
                     + " where i_usuarios = " + i_usuarios + " and inicio=" + dia;
+
         }
         if (tabela.equals("atleta_micro_ciclo_treinos")) {
             int i_usuarios = jsonObj.getJSONObject("params").optInt("i_usuarios", 0);
@@ -142,6 +147,7 @@
                     + "from micro_ciclo_treinos p "
                     + "where i_clientes = " + i_clientes + " and i_usuarios = " + i_usuarios + " and i_micro_ciclo=" + i_micro_ciclo
                     + " order by dia, ordem";
+
         }
         if (tabela.equals("tipos_modalidades")) {
             sql = "select i_tipos_modalidades as codigo, i_clientes, descricao from tipos_modalidades where i_clientes = " + i_clientes + " order by 1, 2";

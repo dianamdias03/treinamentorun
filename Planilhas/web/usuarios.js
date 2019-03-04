@@ -34,15 +34,25 @@ treinoApp.controller('UsuariosCtrl', function ($scope, $rootScope, $location, $h
 
     };
 
-    $scope.gravar = function (item)
+    $scope.gravar = function (item, acaoGravar)
     {
-        $http.post("gravar.jsp", {params: {"tabela": "usuarios", "dados": item}}).then(function (response) {
+
+        if (acaoGravar === 3) {
+            if (!confirm('Confirma a exclusão do atleta?')) {
+                return;
+            }
+        }
+
+        $http.post("gravar.jsp", {params: {"tabela": "usuarios", acao: acaoGravar, "dados": item}}).then(function (response) {
             $scope.retornoGravar = response.data;
             if ($scope.retornoGravar.resultado) {
                 item.ctrl_status = 1;
                 if (item.codigo === 0) {
                     item.codigo = response.data.novoCodigo;
                     $scope.listaRegistros.push(item);
+                }
+                if(acaoGravar===3){
+                    $scope.load();
                 }
                 $('#myModal').modal('hide');
             }

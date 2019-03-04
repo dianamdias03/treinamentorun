@@ -6,7 +6,7 @@ public class Tabela {
     public String insertColunas = "";
     public String insertValores = "";
     public String updateLista = "";
-    public String whereLista = "";
+    private String whereLista = "";
     public String nomeTabela;
 
     private int codigo;
@@ -66,6 +66,10 @@ public class Tabela {
         return "delete from " + nomeTabela + " where " + whereLista + ";";
     }
 
+    public String getDeleteWithUpdate() {
+        return "update " + nomeTabela + " set exclusao=now() where " + whereLista + ";";
+    }
+
     public void addColunaS(String coluna, String valor) {
         valor = valor.replaceAll("'", "''");
         addColuna(coluna, "'" + valor + "'");
@@ -108,6 +112,14 @@ public class Tabela {
 
     public void setCodigo(int codigo) {
         this.codigo = codigo;
+    }
+
+    public String getWhereLista() {
+        return whereLista;
+    }
+
+    public void setWhereLista(String whereLista) {
+        this.whereLista = whereLista;
     }
 
 }

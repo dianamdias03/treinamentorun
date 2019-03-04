@@ -97,27 +97,13 @@
                                     <td ng-click="editar(item)">
                                         <a ng-click="selecionarAtleta(item)">{{item.nome}}</a>
                                     </td>
-                                    <!-- <td ng-click="editar(item)">
-                                        <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia2)}}">Seg</span>
-                                        <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia3)}}">Ter</span>
-                                        <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia4)}}">Qua</span>
-                                        <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia5)}}">Qui</span>
-                                        <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia6)}}">Sex</span>
-                                        <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia7)}}">Sab</span>
-                                        <span class="label label-success" style="background-color: {{getCorModalidadeDia(item.Dia8)}}">Dom</span>
-                                    </td>
-                                    <td>
-                                        {{item.nomeGrupo}}
-                                    </td> -->
+                                   
                                     <td>
                                         {{item.situacao}}
                                     </td>
                                     <td>
                                         <span class="label label-success" ng-show="item.data_email !== nil"  title="Tooltip with HTML">Enviado</span>
                                     </td>
-                                    <!--                                    <td>
-                                                                            {{item.data_conclusao}}
-                                                                        </td>-->
                                 </tr>
                             </tbody>
                         </table>

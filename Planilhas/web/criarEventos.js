@@ -60,15 +60,23 @@ treinoApp.controller('CriaEventosCtrl', function ($scope, $rootScope, $location,
 
     };
 
-    $scope.gravar = function (item)
+    $scope.gravar = function (item, acaoGravar)
     {
-        $http.post("gravar.jsp", {params: {"tabela": "criarEventos", "dados": item}}).then(function (response) {
+        if (acaoGravar === 3) {
+            if (!confirm('Confirma a exclusão do evento?')) {
+                return;
+            }
+        }
+        $http.post("gravar.jsp", {params: {"tabela": "criarEventos", acao: acaoGravar, "dados": item}}).then(function (response) {
             $scope.retornoGravar = response.data;
             if ($scope.retornoGravar.resultado) {
                 item.ctrl_status = 1;
                 if (item.codigo === 0) {
                     item.codigo = response.data.novoCodigo;
                     $scope.listaRegistros.push(item);
+                }
+                if (acaoGravar === 3) {
+                    $scope.load();
                 }
                 $('#myModal').modal('hide');
             }

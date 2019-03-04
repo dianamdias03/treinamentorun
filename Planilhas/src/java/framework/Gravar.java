@@ -7,49 +7,47 @@ package framework;
 
 import org.json.JSONObject;
 
-
 public abstract class Gravar {
 
     private Tabela tabela;
     public long lastID;
-    
-    private GerenciaRequests gerenciaRequests;
 
+    private GerenciaRequests gerenciaRequests;
 
     public boolean update() {
 
         String sql;
         boolean resultado;
-        int tipoComando;
         long codigo;
 
         if (tabela.isNewRecord()) {
             sql = this.getTabela().getInsert();
-            tipoComando=1;
         } else {
             if (getGerenciaRequests().isDeleteRecord()) {
                 sql = this.getTabela().getDelete();
-                tipoComando=3;
+            } else if (getGerenciaRequests().isDeleteWithUpdateRecord()) {
+                sql = this.getTabela().getDeleteWithUpdate();
             } else {
                 sql = this.getTabela().getUpdate();
-                tipoComando=2;
             }
         }
 
-//        Arquivo.gravarLog(sql);
+        Arquivo.gravarLog("sql gravar: " + sql);
+        System.out.println("Gravar SQL: " + sql);
 
+//        Arquivo.gravarLog(sql);
         Conexao conexao = new Conexao();
         conexao.conectar();
         resultado = conexao.executaComando(sql);
         this.lastID = conexao.lastID;
-        
-        codigo=getTabela().getCodigo();
-        if(codigo==0){
-            codigo=this.lastID;
+
+        codigo = getTabela().getCodigo();
+        if (codigo == 0) {
+            codigo = this.lastID;
         }
-        
+
         this.triggerAposGravar(codigo);
-        
+
         conexao.desconectar();
 
         return resultado;
@@ -84,6 +82,7 @@ public abstract class Gravar {
     public abstract void defineTabela();
 
     public abstract JSONObject newRecord();
+
     public abstract boolean triggerAposGravar(long codigo);
 
     public GerenciaRequests getGerenciaRequests() {

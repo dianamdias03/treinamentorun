@@ -293,6 +293,7 @@ public class ConsultasSQL {
                 + " coalesce( (select min(op.opcao) from eventosParticipacoes op where op.i_usuarios=" + i_usuarios + " and op.i_eventos=eventos.i_eventos), 'Não informado') as opcaoSelecionada "
                 + " from eventos "
                 + " where i_clientes=" + i_clientes
+                + " and exclusao is null"
                 + " order by dia, nome";
 
         Conexao conexao = new Conexao();

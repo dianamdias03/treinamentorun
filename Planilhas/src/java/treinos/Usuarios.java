@@ -121,7 +121,7 @@ public class Usuarios extends framework.Gravar {
     public boolean triggerAposGravar(long codigo) {
         MicroCicloSetup microCicloSetup = new MicroCicloSetup();
         try {
-            microCicloSetup.gerarPeriodos(null, 0);
+            microCicloSetup.gerarPeriodos(null, codigo);
         } catch (IOException ex) {
             Arquivo.gravarLog("triggerAposGravar: Erro " + ex.getMessage());
         }

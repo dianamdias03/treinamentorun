@@ -117,13 +117,7 @@ treinoApp.controller('TreinadorCtrl', function ($scope, $rootScope, $location, $
             $scope.conta = 0;
             $scope.contaOk = 0;
             for (i = 0; i < $scope.listaRegistros.length; i++) {
-                if ($scope.listaRegistros[i].Dia2 !== -1 &&
-                        $scope.listaRegistros[i].Dia3 !== -1 &&
-                        $scope.listaRegistros[i].Dia4 !== -1 &&
-                        $scope.listaRegistros[i].Dia5 !== -1 &&
-                        $scope.listaRegistros[i].Dia6 !== -1 &&
-                        $scope.listaRegistros[i].Dia7 !== -1 &&
-                        $scope.listaRegistros[i].Dia8 !== -1) {
+                if ($scope.listaRegistros[i].codigo_situacao===2) {
                     $scope.contaOk++;
                 }
                 $scope.conta++;
