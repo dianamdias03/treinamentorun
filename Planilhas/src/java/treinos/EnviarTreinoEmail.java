@@ -6,6 +6,8 @@ import framework.RequestsAction;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import framework.EnviarEmail;
+import framework.SendMail;
+import java.util.Base64;
 
 public class EnviarTreinoEmail extends RequestsAction {
 
@@ -25,10 +27,19 @@ public class EnviarTreinoEmail extends RequestsAction {
                 getParams().getJSONObject("enviarPlanilha").optInt("i_usuarios", 0),
                 getParams().getJSONObject("enviarPlanilha").optString("inicio", "2017-09-18"));
 
-        EnviarEmail enviarEmail = new EnviarEmail();
-        sucesso = enviarEmail.enviarHtml(
+        /*
+         EnviarEmail enviarEmail = new EnviarEmail();
+         sucesso = enviarEmail.enviarHtml(
+         emailConteudo.optString("email"),
+         "treinadormarceloolimpio@gmail.com",
+         emailConteudo.optString("titulo"),
+         emailConteudo.optString("conteudo")
+         );
+         */
+        SendMail sendMail = new SendMail();
+        sucesso = sendMail.gravarDB(
+                emailConteudo.optString("nome"),
                 emailConteudo.optString("email"),
-                "treinadormarceloolimpio@gmail.com",
                 emailConteudo.optString("titulo"),
                 emailConteudo.optString("conteudo")
         );
@@ -101,6 +112,7 @@ public class EnviarTreinoEmail extends RequestsAction {
         sb.append("</p>");
         sb = new StringBuilder("<html><body>" + sb.toString() + "</body></html>");
 
+        retorno.put("nome", dados.optString("nome", ""));
         retorno.put("email", dados.optString("email", ""));
         retorno.put("titulo", dados.optString("nomePlanilha", ""));
         retorno.put("conteudo", sb.toString());

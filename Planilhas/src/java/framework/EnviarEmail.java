@@ -13,14 +13,25 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.ImageHtmlEmail;
 
 public class EnviarEmail {
 
+    /*
     public static final String email = "m3esporte@zoho.com";
+//    public static final String email = "grupodecorridasm3@gmail.com";
     public static final String senha = "2Fcontext61325*0*3556907111810_*";
     public static final String reply = "marceloolimpio2010@hotmail.com";
+     */
+    public static final String email = "noreply@somartecnologia.com.br";
+    public static final String emailNome = "Somar Tecnologia";
+    public static final String senha = "1b_Tg4pKEXTZs8#L5DRF";
+    public static final String reply = "noreply@somartecnologia.com.br";
+    public static final String replyNome = "Somar Tecnologia";
+    public static final String smtp = "mail.somartecnologia.com.br";
+    public static final int smtpPorta = 587;
 
     public static void main(String[] args) {
 
@@ -46,10 +57,10 @@ public class EnviarEmail {
 
         Session session = Session.getDefaultInstance(props,
                 new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(EnviarEmail.email, EnviarEmail.senha);
-                    }
-                });
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(EnviarEmail.email, EnviarEmail.senha);
+            }
+        });
 
         try {
 
@@ -72,10 +83,25 @@ public class EnviarEmail {
 
         boolean retorno;
         ImageHtmlEmail objetoEmail = new ImageHtmlEmail();
+        /*
         objetoEmail.setSmtpPort(465);
         objetoEmail.setSSLOnConnect(true);
         objetoEmail.setHostName("smtp.zoho.com");
         objetoEmail.setAuthentication(EnviarEmail.email, EnviarEmail.senha);
+        
+         */
+
+        objetoEmail.setSmtpPort(smtpPorta);
+        objetoEmail.setSSLOnConnect(false);
+        objetoEmail.setHostName(EnviarEmail.smtp);
+        objetoEmail.setAuthentication(EnviarEmail.email, EnviarEmail.senha);
+
+        /*
+            objetoEmail.setHostName("smtp.googlemail.com");
+            objetoEmail.setSmtpPort(465);
+            objetoEmail.setAuthenticator(new DefaultAuthenticator(EnviarEmail.email, EnviarEmail.senha));
+            objetoEmail.setSSLOnConnect(true);
+         */
         objetoEmail.setCharset("UTF-8");
 
         try {
@@ -83,10 +109,12 @@ public class EnviarEmail {
             if (enderecoEmail2 != null) {
                 objetoEmail.addTo(enderecoEmail2);
             }
+            objetoEmail.addTo("grupodecorridasm3@gmail.com");
 
             objetoEmail.setFrom(EnviarEmail.email, "M3 Grupo de Corrida");
             objetoEmail.addReplyTo(EnviarEmail.reply, "Treinador Marcelo Olimpio");
-            objetoEmail.addReplyTo("m3esporte@zoho.com", "Treinador Marcelo Olimpio");
+            //objetoEmail.addReplyTo("grupodecorridasm3@gmail.com", "Treinador Marcelo Olimpio");
+
             objetoEmail.setSubject(titulo);
             objetoEmail.setHtmlMsg(corpo);
 //            email.setTextMsg("Seu cliente de email nao suporta mensagens no formato HTML");

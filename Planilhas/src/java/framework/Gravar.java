@@ -32,8 +32,8 @@ public abstract class Gravar {
             }
         }
 
-        Arquivo.gravarLog("sql gravar: " + sql);
-        System.out.println("Gravar SQL: " + sql);
+       // Arquivo.gravarLog("sql gravar: " + sql);
+       // System.out.println("Gravar SQL: " + sql);
 
 //        Arquivo.gravarLog(sql);
         Conexao conexao = new Conexao();
